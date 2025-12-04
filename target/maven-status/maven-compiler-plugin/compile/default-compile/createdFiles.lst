@@ -3,6 +3,7 @@ beans\admin\AdminCustomerDetailsBean.class
 com\telecom\telecomcustomerserviceportal\JakartaRestConfiguration.class
 dao\CustomerDAO.class
 beans\admin\AdminServiceBean.class
+beans\customer\CustomerRegisterBean.class
 beans\LoginBean.class
 beans\admin\AdminReportsBean.class
 dao\SubscriptionDAO.class

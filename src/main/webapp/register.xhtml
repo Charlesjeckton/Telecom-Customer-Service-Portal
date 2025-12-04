@@ -1,27 +1,28 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      lang="en">
 
 <head>
-    <meta http-equiv="Content-Type"
-          content="text/html; charset=UTF-8" />
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <title>Register Customer</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
 
-    <!-- Prime Icons -->
+    <!-- PrimeIcons -->
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css" />
+          href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css"/>
 
-    <style type="text/css">
+    <style>
         body {
             margin: 0;
             min-height: 100vh;
@@ -29,16 +30,22 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #4e2fbf, #1a94e8);
-            font-family: Arial, sans-serif;
+            font-family: "Poppins", sans-serif;
         }
 
         .register-wrapper {
             width: 100%;
             max-width: 420px;
             padding: 28px 22px;
-            background: #ffffff;
+            background: #fff;
             border-radius: 18px;
             box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+            animation: fadeIn 0.7s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .input-group-text {
@@ -52,7 +59,7 @@
         }
 
         .form-control:focus {
-            background: #ffffff;
+            background: #fff;
             border-color: #1a94e8;
             box-shadow: 0 0 4px rgba(26,148,232,0.4);
         }
@@ -65,10 +72,6 @@
         button:hover {
             opacity: 0.92;
         }
-
-        .alert {
-            font-size: 0.9rem;
-        }
     </style>
 </head>
 
@@ -78,92 +81,88 @@
 
     <h4 class="text-center fw-bold mb-3">Telecom System Register</h4>
 
-    <!-- Placeholder alert examples; you can show/hide them using JS later -->
-    <div id="successBox"
-         class="alert alert-success d-none">
-        <i class="pi pi-check-circle me-2"></i>
-        Registration successful!
-    </div>
+    <!-- SUCCESS -->
+    <h:panelGroup rendered="#{not empty param.success}">
+        <div class="alert alert-success d-flex align-items-center">
+            <i class="pi pi-check-circle me-2"></i>
+            #{param.success}
+        </div>
+    </h:panelGroup>
 
-    <div id="errorBox"
-         class="alert alert-danger d-none">
-        <i class="pi pi-exclamation-triangle me-2"></i>
-        Something went wrong!
-    </div>
+    <!-- ERROR -->
+    <h:panelGroup rendered="#{not empty param.error}">
+        <div class="alert alert-danger d-flex align-items-center">
+            <i class="pi pi-exclamation-triangle me-2"></i>
+            #{param.error}
+        </div>
+    </h:panelGroup>
 
-    <!-- PURE FRONT-END FORM -->
-    <form action="" method="post">
+    <!-- JSF FORM -->
+    <h:form>
 
         <!-- Full Name -->
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="pi pi-user"></i></span>
-            <input type="text"
-                   name="name"
-                   class="form-control"
-                   placeholder="Full Name"
-                   required="required" />
+            <h:inputText value="#{customerRegisterBean.name}"
+                         styleClass="form-control"
+                         required="true"
+                         p:placeholder="Full Name"/>
         </div>
 
         <!-- Phone Number -->
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="pi pi-phone"></i></span>
-            <input type="text"
-                   name="phone"
-                   class="form-control"
-                   placeholder="Phone Number"
-                   required="required" />
+            <h:inputText value="#{customerRegisterBean.phone}"
+                         styleClass="form-control"
+                         required="true"
+                         p:placeholder="Phone Number"/>
         </div>
 
         <!-- Email -->
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="pi pi-envelope"></i></span>
-            <input type="email"
-                   name="email"
-                   class="form-control"
-                   placeholder="Email Address"
-                   required="required" />
+            <h:inputText value="#{customerRegisterBean.email}"
+                         styleClass="form-control"
+                         required="true"
+                         p:placeholder="Email Address"/>
         </div>
 
         <!-- Username -->
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="pi pi-user-edit"></i></span>
-            <input type="text"
-                   name="username"
-                   class="form-control"
-                   placeholder="Choose Username"
-                   required="required" />
+            <h:inputText value="#{customerRegisterBean.username}"
+                         styleClass="form-control"
+                         required="true"
+                         p:placeholder="Choose Username"/>
         </div>
 
         <!-- Password -->
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="pi pi-lock"></i></span>
-            <input type="password"
-                   name="password"
-                   class="form-control"
-                   placeholder="Create Password"
-                   required="required" />
+            <h:inputSecret value="#{customerRegisterBean.password}"
+                           styleClass="form-control"
+                           required="true"
+                           p:placeholder="Create Password"/>
         </div>
 
-        <button type="submit"
-                class="btn btn-primary w-100 py-2">
-            <i class="pi pi-user-plus"></i>
-            Register
-        </button>
-    </form>
+        <!-- Submit -->
+        <h:commandButton value="Register"
+                         action="#{customerRegisterBean.registerCustomer}"
+                         styleClass="btn btn-primary w-100 py-2">
+        </h:commandButton>
+
+    </h:form>
 
     <div class="text-center mt-3">
         Already have an account?
         <a href="login.xhtml">Login</a>
     </div>
 
-    <p class="text-center mt-2 text-muted"
-       style="font-size: 13px;">
+    <p class="text-center mt-2 text-muted" style="font-size: 13px;">
         © 2025 Telecom Management System
     </p>
-
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
