@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Subscription Management - Admin Panel</title>
+
+        <style>
+            .subscription-table {
+                font-size: 0.95rem;
+            }
+            .subscription-table th, .subscription-table td {
+                padding: 10px;
+            }
+
+            @media (max-width: 768px) {
+                h2 {
+                    font-weight: 700;
+                    margin-top: 40px;
+                    margin-bottom: 6px;
+                }
+                .subscription-table {
+                    font-size: 0.80rem !important;
+                }
+                .subscription-table th, .subscription-table td {
+                    padding: 6px !important;
+                }
+                .card {
+                    margin: 0 5px;
+                }
+            }
+
+            @media (max-width: 576px) {
+                .subscription-table {
+                    font-size: 0.75rem !important;
+                }
+                .subscription-table th, .subscription-table td {
+                    padding: 4px !important;
+                }
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+
+        <ui:include src="/admin/includes/adminTheme.xhtml" />
+        <ui:include src="/admin/includes/adminSidebar.xhtml" />
+
+        <div class="content">
+
+            <!-- CENTERED HEADING (100% working) -->
+            <div class="d-flex justify-content-center mb-2">
+                <h2 class="fw-bold mb-2 text-center" style="width:100%;">
+                    All Subscriptions
+                </h2>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle subscription-table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Purchase Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- LOOP SUBSCRIPTIONS -->
+                                <ui:repeat value="#{adminSubscriptionBean.subscriptions}" var="s">
+                                    <tr>
+                                        <td>#{s.customerName}</td>
+                                        <td>#{s.serviceName}</td>
+
+                                        <td>
+                                            <h:outputText value="#{s.purchaseDate}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </td>
+
+                                        <td>
+                                            <h:outputText value="#{s.expiryDate}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge #{s.status eq 'ACTIVE' ? 'bg-success' : 'bg-secondary'}">
+                                                #{s.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+
+                                <!-- SHOW WHEN EMPTY -->
+                                <h:panelGroup rendered="#{empty adminSubscriptionBean.subscriptions}">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            No subscriptions found.
+                                        </td>
+                                    </tr>
+                                </h:panelGroup>
+
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </h:body>
+</html>

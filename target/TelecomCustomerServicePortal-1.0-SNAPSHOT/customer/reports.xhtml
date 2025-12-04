@@ -1,0 +1,159 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Reports &amp; Charts - Admin Panel</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <style>
+            /* ======== PAGE LAYOUT PADDING ======== */
+            .content {
+                padding: 30px 40px;
+            }
+
+            @media (max-width: 768px) {
+                .content {
+                    padding: 15px;
+                }
+            }
+            .chart-title {
+                font-weight: bold;
+                text-align: center;   /* center text */
+                margin-bottom: 20px;
+            }
+
+
+            /* ======== CHART CARD ======== */
+            .chart-card {
+                background: #ffffff;
+                border-radius: 14px;
+                padding: 24px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                margin-bottom: 35px;
+                transition: box-shadow 0.2s ease-in-out;
+            }
+
+            .chart-card:hover {
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            }
+            .chart-header {
+                margin-bottom: 30px !important; /* adjust as needed */
+            }
+
+            /* ======== TITLES ======== */
+            h2 {
+                font-weight: 700;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+
+            @media (max-width: 768px) {
+                h2 {
+                    margin-top: 35px;
+                    margin-bottom: 10px;
+                }
+            }
+
+            /* ======== CHART WRAPPER ======== */
+            .chart-wrapper {
+                max-width: 750px;
+                margin: 0 auto;
+            }
+
+            @media (min-width: 1200px) {
+                .chart-wrapper {
+                    max-width: 850px;
+                }
+            }
+
+            /* ======== CHART CANVAS ======== */
+            canvas {
+                max-height: 380px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body>
+        <ui:include src="includes/customerTheme.xhtml" />
+        <ui:include src="includes/customerNavbar.xhtml" />
+
+        <div class="content">
+            <h2 class="fw-bold mb-2 mt-2 text-center">Reports &amp; Billing Analytics</h2>
+
+
+            <!-- ======================= SUMMARY CARDS ======================= -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="chart-card text-center">
+                        <h5>Total Bills</h5>
+                        <h2 class="text-primary">#{customerReportsBean.totalBills}</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card text-center">
+                        <h5>Paid Bills</h5>
+                        <h2 class="text-success">#{customerReportsBean.paidCount}</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card text-center">
+                        <h5>Unpaid Bills</h5>
+                        <h2 class="text-danger">#{customerReportsBean.unpaidCount}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================= PIE CHART ======================= -->
+            <div class="chart-card">
+                <h2 class="fw-bold mt-2 text-center chart-header">Paid vs Unpaid Bills</h2>
+                <div class="chart-wrapper">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- ======================= LINE CHART ======================= -->
+            <div class="chart-card">
+                <h2 class="fw-bold mt-2 text-center chart-header"> Monthly Billing Trend</h2>
+                <div class="chart-wrapper">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // ================= PIE CHART =================
+            new Chart(document.getElementById('pieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Paid', 'Unpaid'],
+                    datasets: [{
+                            data: [#{customerReportsBean.paidCount}, #{customerReportsBean.unpaidCount}],
+                            backgroundColor: ['#28a745', '#dc3545']
+                        }]
+                }
+            });
+
+            // ================= LINE CHART =================
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: #{customerReportsBean.monthLabels},
+                    datasets: [{
+                            label: 'Total Billing (KES)',
+                            data: #{customerReportsBean.monthValues},
+                            borderWidth: 3,
+                            borderColor: '#007bff',
+                            tension: 0.3
+                        }]
+                }
+            });
+        </script>
+
+    </h:body>
+</ui:composition>

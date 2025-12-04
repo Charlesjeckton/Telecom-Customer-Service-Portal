@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Register Customer</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+
+    <!-- Prime Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css" />
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #4e2fbf, #1a94e8);
+            font-family: Arial, sans-serif;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 420px;
+            padding: 28px 22px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+        }
+
+        .input-group-text {
+            background: #f3f3f3;
+            border-right: none;
+        }
+
+        .form-control {
+            border-left: none;
+            background: #f3f3f3;
+        }
+
+        .form-control:focus {
+            background: #ffffff;
+            border-color: #1a94e8;
+            box-shadow: 0 0 4px rgba(26,148,232,0.4);
+        }
+
+        button {
+            background: linear-gradient(135deg, #1a94e8, #6b1fc7);
+            border: none;
+        }
+
+        button:hover {
+            opacity: 0.92;
+        }
+
+        .alert {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="register-wrapper">
+
+    <h4 class="text-center fw-bold mb-3">Telecom System Register</h4>
+
+    <!-- Placeholder alert examples; you can show/hide them using JS later -->
+    <div id="successBox"
+         class="alert alert-success d-none">
+        <i class="pi pi-check-circle me-2"></i>
+        Registration successful!
+    </div>
+
+    <div id="errorBox"
+         class="alert alert-danger d-none">
+        <i class="pi pi-exclamation-triangle me-2"></i>
+        Something went wrong!
+    </div>
+
+    <!-- PURE FRONT-END FORM -->
+    <form action="" method="post">
+
+        <!-- Full Name -->
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="pi pi-user"></i></span>
+            <input type="text"
+                   name="name"
+                   class="form-control"
+                   placeholder="Full Name"
+                   required="required" />
+        </div>
+
+        <!-- Phone Number -->
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="pi pi-phone"></i></span>
+            <input type="text"
+                   name="phone"
+                   class="form-control"
+                   placeholder="Phone Number"
+                   required="required" />
+        </div>
+
+        <!-- Email -->
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="pi pi-envelope"></i></span>
+            <input type="email"
+                   name="email"
+                   class="form-control"
+                   placeholder="Email Address"
+                   required="required" />
+        </div>
+
+        <!-- Username -->
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="pi pi-user-edit"></i></span>
+            <input type="text"
+                   name="username"
+                   class="form-control"
+                   placeholder="Choose Username"
+                   required="required" />
+        </div>
+
+        <!-- Password -->
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="pi pi-lock"></i></span>
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Create Password"
+                   required="required" />
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary w-100 py-2">
+            <i class="pi pi-user-plus"></i>
+            Register
+        </button>
+    </form>
+
+    <div class="text-center mt-3">
+        Already have an account?
+        <a href="login.xhtml">Login</a>
+    </div>
+
+    <p class="text-center mt-2 text-muted"
+       style="font-size: 13px;">
+        © 2025 Telecom Management System
+    </p>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Service Management - Admin Panel</title>
+
+    <style>
+        /* Content wrapper */
+        .main-content {
+            margin-left: 260px;
+            padding: 25px;
+            transition: 0.3s ease;
+        }
+
+        /* Center interior content */
+        .page-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Adjust for smaller screens */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0 !important;
+                padding: 15px;
+            }
+        }
+
+        /* Action buttons styling */
+        .table-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            min-width: 65px;
+            font-size: 13px;
+            padding: 5px 10px;
+        }
+
+        .toggle-btn {
+            min-width: 85px;
+        }
+
+        @media (max-width: 576px) {
+            .action-btn {
+                min-width: 55px;
+                font-size: 12px;
+            }
+            .toggle-btn {
+                min-width: 70px;
+            }
+        }
+
+        /* Add button */
+        .add-btn {
+            padding: 10px 22px;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 767px) {
+            .add-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <!-- Sidebar + Theme Includes -->
+    <ui:include src="/admin/includes/adminTheme.xhtml" />
+    <ui:include src="/admin/includes/adminSidebar.xhtml" />
+
+    <div class="main-content">
+
+        <!-- Section Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-center text-md-start mb-3 mb-md-0">
+                Manage Services
+            </h2>
+
+            <a href="addService.xhtml" class="btn btn-primary add-btn">
+                + Add New
+            </a>
+        </div>
+
+        <div class="page-wrapper">
+
+            <!-- Success + Error Alerts -->
+            <h:panelGroup id="alertMsg">
+                <h:panelGroup rendered="#{not empty adminServiceBean.successMessage}">
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <strong>Success:</strong> #{adminServiceBean.successMessage}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{not empty adminServiceBean.errorMessage}">
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <strong>Error:</strong> #{adminServiceBean.errorMessage}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
+
+            <!-- Services Table -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <h:form id="servicesForm">
+
+                            <table class="table table-hover table-bordered align-middle">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Charges</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <ui:repeat value="#{adminServiceBean.services}" var="s">
+                                    <tr>
+                                        <td>#{s.name}</td>
+                                        <td style="max-width: 220px;">#{s.description}</td>
+                                        <td>KES #{s.charge}</td>
+                                        <td>#{s.durationValue} #{s.durationUnit}</td>
+
+                                        <td>
+                                            <h:outputText
+                                                    value="#{s.active ? 'Active' : 'Inactive'}"
+                                                    styleClass="badge #{s.active ? 'bg-success' : 'bg-secondary'}" />
+                                        </td>
+
+                                        <td>
+                                            <div class="table-actions">
+
+                                                <!-- Toggle Button -->
+                                                <h:commandButton
+                                                        value="#{s.active ? 'Deactivate' : 'Activate'}"
+                                                        action="#{adminServiceBean.toggleStatus(s.id)}"
+                                                        styleClass="btn #{s.active ? 'btn-secondary' : 'btn-success'} btn-sm toggle-btn">
+                                                    <f:ajax render="servicesForm alertMsg" />
+                                                </h:commandButton>
+
+                                                <!-- Edit -->
+                                                <a href="editService.xhtml?id=#{s.id}"
+                                                   class="btn btn-warning btn-sm action-btn">
+                                                    Edit
+                                                </a>
+
+                                                <!-- Delete -->
+                                                <h:commandButton value="Delete"
+                                                                 action="#{adminServiceBean.delete(s.id)}"
+                                                                 styleClass="btn btn-danger btn-sm action-btn"
+                                                                 onclick="return confirm('Are you sure?');">
+                                                    <f:ajax render="servicesForm alertMsg"/>
+                                                </h:commandButton>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                                </tbody>
+                            </table>
+
+                        </h:form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</h:body>
+</html>

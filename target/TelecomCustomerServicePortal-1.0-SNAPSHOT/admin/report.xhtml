@@ -1,0 +1,131 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Reports &amp; Charts - Admin Panel</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <style>
+            .chart-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                margin-bottom: 30px;
+            }
+
+            .chart-title {
+                font-weight: bold;
+                margin-bottom: 15px;
+                text-align: center; /* CENTERED */
+            }
+
+            @media (max-width: 768px) {
+                h2 {
+                    font-weight: 700;
+                    margin-top: 40px;
+                    margin-bottom: 6px;
+                }
+            }
+
+            .chart-wrapper {
+                max-width: 700px;
+                margin: 0 auto;
+            }
+
+            @media (min-width: 1200px) {
+                .chart-wrapper {
+                    max-width: 800px;
+                }
+            }
+
+            canvas {
+                max-height: 350px !important;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <ui:include src="includes/adminTheme.xhtml" />
+        <ui:include src="includes/adminSidebar.xhtml" />
+
+        <div class="content">
+
+            <!-- MAIN HEADER CENTERED -->
+            <h2 class="fw-bold mb-4 text-center">Reports &amp; Billing Analytics</h2>
+
+            <!-- ======================= SUMMARY CARDS ======================= -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="chart-card text-center">
+                        <h5 class="text-center">Total Bills</h5>
+                        <h2 class="text-primary text-center">#{adminReportsBean.totalBills}</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card text-center">
+                        <h5 class="text-center">Paid Bills</h5>
+                        <h2 class="text-success text-center">#{adminReportsBean.paidCount}</h2>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="chart-card text-center">
+                        <h5 class="text-center">Unpaid Bills</h5>
+                        <h2 class="text-danger text-center">#{adminReportsBean.unpaidCount}</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================= PIE CHART ======================= -->
+            <div class="chart-card">
+                <h4 class="chart-title text-center">Paid vs Unpaid Bills</h4>
+                <div class="chart-wrapper">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- ======================= LINE CHART ======================= -->
+            <div class="chart-card">
+                <h4 class="chart-title text-center">Monthly Billing Trend</h4>
+                <div class="chart-wrapper">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // ================= PIE CHART =================
+            new Chart(document.getElementById('pieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Paid', 'Unpaid'],
+                    datasets: [{
+                        data: [#{adminReportsBean.paidCount}, #{adminReportsBean.unpaidCount}],
+                        backgroundColor: ['#28a745', '#dc3545']
+                    }]
+                }
+            });
+
+            // ================= LINE CHART =================
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: #{adminReportsBean.monthLabels},
+                    datasets: [{
+                        label: 'Total Billing (KES)',
+                        data: #{adminReportsBean.monthValues},
+                        borderWidth: 3,
+                        borderColor: '#007bff',
+                        tension: 0.3
+                    }]
+                }
+            });
+        </script>
+
+    </h:body>
+</ui:composition>

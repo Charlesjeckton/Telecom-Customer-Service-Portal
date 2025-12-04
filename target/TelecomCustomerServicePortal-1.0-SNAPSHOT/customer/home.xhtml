@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>Customer Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Theme Include -->
+        <ui:include src="/customer/includes/customerTheme.xhtml" />
+
+        <style>
+            body {
+                background: #f1f4f9;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #333;
+            }
+
+            .page-container {
+                max-width: 900px;
+                margin: 20px auto 40px auto;     /* Default for desktops/laptops */
+                background: white;
+                padding: 35px;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+
+            /* 📱 Smaller margin on tablets */
+            @media (max-width: 768px) {
+                .page-container {
+                    margin: 12px auto 30px auto;  /* Less top and bottom margin */
+                    padding: 25px;                /* Slightly reduced padding */
+                }
+            }
+
+            /* 📲 Very small screens (phones) */
+            @media (max-width: 480px) {
+                .page-container {
+                    margin: 8px auto 25px auto;   /* Minimal top margin */
+                    padding: 20px;                /* Compact padding */
+                }
+            }
+
+
+            .menu-card {
+                border-radius: 10px;
+                transition: transform 0.3s, box-shadow 0.3s;
+                cursor: pointer;
+            }
+
+            .menu-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <!-- NAVBAR INCLUDE -->
+        <ui:include src="/customer/includes/customerNavbar.xhtml" />
+
+        <!-- MAIN CONTENT -->
+        <div class="page-container">
+
+            <h2 class="mb-2 fw-bold text-center">
+                Welcome, #{loginBean.username} 👋
+            </h2>
+            <p>Select an option below:</p>
+
+            <div class="row mt-4">
+
+                <div class="col-md-4 mb-4">
+                    <a href="services.xhtml" class="text-decoration-none text-dark">
+                        <div class="card menu-card p-4 text-center">
+                            <h5>🛠️ Services</h5>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <a href="subscriptions.xhtml" class="text-decoration-none text-dark">
+                        <div class="card menu-card p-4 text-center">
+                            <h5>📄 My Subscriptions</h5>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <a href="billing.xhtml" class="text-decoration-none text-dark">
+                        <div class="card menu-card p-4 text-center">
+                            <h5>💳 Billing History</h5>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <a href="reports.xhtml" class="text-decoration-none text-dark">
+                        <div class="card menu-card p-4 text-center">
+                            <h5>📊 Reports</h5>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </body>
+
+</html>

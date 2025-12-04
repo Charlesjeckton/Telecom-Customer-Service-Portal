@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <!-- context path -->
+    <ui:param name="ctx" value="#{request.contextPath}" />
+
+    <!-- current path -->
+    <ui:param name="currentPath" value="#{request.requestURI}" />
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid px-3">
+
+            <a class="navbar-brand fw-bold" href="#{ctx}/customer/home.xhtml">
+                Telecom
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+
+                    <!-- Home -->
+                    <li class="nav-item">
+                        <a class="nav-link #{fn:contains(currentPath,'/customer/home') ? 'active' : ''}"
+                           href="#{ctx}/customer/home.xhtml">
+                            Home
+                        </a>
+                    </li>
+
+                    <!-- Services -->
+                    <li class="nav-item">
+                        <a class="nav-link #{fn:contains(currentPath,'/customer/services') ? 'active' : ''}"
+                           href="#{ctx}/customer/services.xhtml">
+                            Services
+                        </a>
+                    </li>
+
+                    <!-- Subscriptions -->
+                    <li class="nav-item">
+                        <a class="nav-link #{fn:contains(currentPath,'/customer/subscriptions') ? 'active' : ''}"
+                           href="#{ctx}/customer/subscriptions.xhtml">
+                            Subscription
+                        </a>
+                    </li>
+
+                    <!-- Billing -->
+                    <li class="nav-item">
+                        <a class="nav-link #{fn:contains(currentPath,'/customer/billing') ? 'active' : ''}"
+                           href="#{ctx}/customer/billing.xhtml?tab=unpaid">
+                            Billing
+                        </a>
+                    </li>
+
+                    <!-- Reports -->
+                    <li class="nav-item">
+                        <a class="nav-link #{fn:contains(currentPath,'/customer/reports') ? 'active' : ''}"
+                           href="#{ctx}/customer/reports.xhtml">
+                            Report
+                        </a>
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="nav-item">
+                        <h:form style="display:inline;">
+                            <h:commandLink action="#{logoutBean.logout}" styleClass="nav-link logout-btn">
+                                Logout
+                            </h:commandLink>
+                        </h:form>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</html>

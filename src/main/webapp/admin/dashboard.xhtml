@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <h:head>
+        <title>Dashboard - Admin Panel</title>
+
+        <style>
+            /* PAGE CONTENT WRAPPER */
+            .content {
+                padding: 30px;
+                margin-left: 260px; /* account for sidebar */
+            }
+
+            h2 {
+                font-weight: 700;
+                margin-bottom: 30px;
+            }
+
+            /* Simple separator replacement */
+            .separator-gap {
+                height: 28px;
+                width: 100%;
+            }
+
+            .dashboard-card {
+                border-radius: 16px;
+                padding: 25px;
+                background: #ffffff;
+                border: 1px solid #e5e5e5;
+                transition: 0.25s ease-in-out;
+                height: 100%;
+            }
+
+            .dashboard-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            }
+
+            .dashboard-card h5 {
+                font-size: 20px;
+                font-weight: 600;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+            }
+
+            .dashboard-card i {
+                font-size: 24px;
+                margin-right: 8px;
+                color: #0d6efd;
+            }
+
+            .dashboard-card p {
+                color: #666;
+                margin-bottom: 18px;
+            }
+
+            .btn-primary {
+                width: 100%;
+                padding: 10px;
+                border-radius: 10px;
+            }
+
+            @media (max-width: 992px) {
+                .content {
+                    margin-left: 0 !important;
+                    padding: 20px;
+                }
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+
+        <!-- NO PRIMEFACES ANYMORE -->
+
+        <!-- SIDEBAR AND THEME -->
+        <ui:include src="/admin/includes/adminTheme.xhtml" />
+        <ui:include src="/admin/includes/adminSidebar.xhtml" />
+
+        <div class="content">
+            <h2 class="text-center">Welcome Admin 👋</h2>
+
+
+            <!-- basic separator -->
+            <div class="separator-gap"></div>
+
+            <div class="row">
+
+                <!-- CUSTOMERS -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <h5><i class="bi bi-people"></i> Customers</h5>
+                            <p>Manage customers</p>
+                            <h:link outcome="/admin/customers.xhtml" styleClass="btn btn-primary">
+                                View Customers
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SERVICES -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <h5><i class="bi bi-list-check"></i> Services</h5>
+                            <p>Manage Telecom services</p>
+                            <h:link outcome="/admin/services.xhtml" styleClass="btn btn-primary">
+                                Manage Services
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBSCRIPTIONS -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <h5><i class="bi bi-card-list"></i> Subscriptions</h5>
+                            <p>Manage customer subscriptions</p>
+                            <h:link outcome="/admin/subscriptions.xhtml" styleClass="btn btn-primary">
+                                View Subscriptions
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BILLING -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <h5><i class="bi bi-cash-stack"></i> Billing History</h5>
+                            <p>Review billing history</p>
+                            <h:link outcome="/admin/billing.xhtml" styleClass="btn btn-primary">
+                                View Billing
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPORT -->
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card shadow-sm">
+                        <div class="card-body">
+                            <h5><i class="bi bi-graph-up"></i> Report</h5>
+                            <p>Review report</p>
+                            <h:link outcome="/admin/report.xhtml" styleClass="btn btn-primary">
+                                View Report
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </h:body>
+</html>

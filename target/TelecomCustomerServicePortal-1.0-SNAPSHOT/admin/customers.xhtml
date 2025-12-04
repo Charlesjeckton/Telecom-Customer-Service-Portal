@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <title>Customer - Admin Panel</title>
+
+    <!-- Removed all PrimeFaces CSS & JS -->
+
+    <style>
+        .table-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .content {
+            padding: 30px;
+            margin-left: 260px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0 !important;
+                padding: 15px;
+            }
+            h2 {
+                font-weight: 700;
+                margin-top: 40px;
+                margin-bottom: 6px;
+            }
+        }
+    </style>
+</h:head>
+
+<h:body>
+
+    <!-- SIDEBAR -->
+    <ui:include src="/admin/includes/adminTheme.xhtml" />
+    <ui:include src="/admin/includes/adminSidebar.xhtml" />
+
+    <!-- JSF form (kept for links/params) -->
+    <h:form>
+
+        <!-- PAGE CONTENT -->
+        <div class="content">
+
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Customer List</h2>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle">
+
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th style="width: 120px;">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- Dynamic customer rows -->
+                                <ui:repeat value="#{adminCustomerBean.customers}" var="c">
+                                    <tr>
+                                        <td>#{c.name}</td>
+                                        <td>#{c.phoneNumber}</td>
+                                        <td>#{c.email}</td>
+
+                                        <td>
+                                            <h:link outcome="customerDetails.xhtml"
+                                                    styleClass="btn btn-primary btn-sm">
+                                                <i class="bi bi-eye"></i> View
+                                                <f:param name="id" value="#{c.id}" />
+                                            </h:link>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+
+                                <!-- No customers message -->
+                                <h:panelGroup rendered="#{empty adminCustomerBean.customers}">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">
+                                            No customers found.
+                                        </td>
+                                    </tr>
+                                </h:panelGroup>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </h:form>
+
+</h:body>
+</html>

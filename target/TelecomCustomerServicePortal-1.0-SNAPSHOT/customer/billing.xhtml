@@ -1,0 +1,99 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!-- =================== CUSTOM THEME + NAVBAR (JSF Includes) =================== -->
+    <!-- Theme Include -->
+    <ui:include src="/customer/includes/customerTheme.xhtml" />
+    <ui:include src="/customer/includes/customerNavbar.xhtml" />
+
+    <style>
+        /* Active tab styling */
+        .nav-tabs .nav-link.active {
+            background-color: #198754 !important;
+            color: #fff !important;
+            border-color: #198754 !important;
+            font-weight: bold;
+        }
+
+        /* Hover effect */
+        .nav-tabs .nav-link:hover {
+            background-color: #e7f1ff;
+            color: #198754;
+        }
+    </style>
+
+    <div class="content">
+
+        <!-- CENTERED TITLE -->
+        <h2 class="pt-4 mb-3 fw-bold text-center">Billing History</h2>
+
+        <!-- ======================= CENTERED TABS ======================= -->
+        <ul class="nav nav-tabs justify-content-center mb-2" id="billingTabs">
+            <li class="nav-item">
+                <h:link outcome="/customer/billing" 
+                        styleClass="nav-link" 
+                        id="tab-paid">
+                    <f:param name="tab" value="paid" />
+                    Paid Bills
+                </h:link>
+            </li>
+
+            <li class="nav-item">
+                <h:link outcome="/customer/billing" 
+                        styleClass="nav-link"
+                        id="tab-unpaid">
+                    <f:param name="tab" value="unpaid" />
+                    Unpaid Bills
+                </h:link>
+            </li>
+        </ul>
+
+
+        <!-- ======================= TAB CONTENT ======================= -->
+        <div class="tab-content" style="padding-top: 0 !important; margin-top: 0 !important;">
+
+            <!-- Unpaid Bills -->
+            <div class="tab-pane fade" id="unpaid">
+                <ui:include src="/customer/unpaidBills.xhtml" />
+            </div>
+
+            <!-- Paid Bills -->
+            <div class="tab-pane fade" id="paid">
+                <ui:include src="/customer/paidBills.xhtml" />
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ======================= TAB LOGIC ======================= -->
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
+
+        const unpaidTab = document.getElementById("tab-unpaid");
+        const paidTab = document.getElementById("tab-paid");
+
+        const unpaidContent = document.getElementById("unpaid");
+        const paidContent = document.getElementById("paid");
+
+        // Reset
+        unpaidTab.classList.remove("active");
+        paidTab.classList.remove("active");
+        unpaidContent.classList.remove("show", "active");
+        paidContent.classList.remove("show", "active");
+
+        // Determine active tab
+        if (tab === "paid") {
+            paidTab.classList.add("active");
+            paidContent.classList.add("show", "active");
+        } else {
+            unpaidTab.classList.add("active");
+            unpaidContent.classList.add("show", "active");
+        }
+    </script>
+
+</ui:composition>

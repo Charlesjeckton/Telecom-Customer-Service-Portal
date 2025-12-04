@@ -1,0 +1,77 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title>Billing History</title>
+        <style>
+            .nav-tabs .nav-link.active {
+                background-color: #198754 !important;
+                color: #fff !important;
+                border-color: #0d6efd !important;
+                font-weight: bold;
+            }
+            .nav-tabs .nav-link:hover {
+                background-color: #e7f1ff;
+                color: #0d6efd;
+            }
+            @media (max-width: 768px) {
+                h2 { font-weight: 700; margin-top: 40px; margin-bottom: 6px; }
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <ui:include src="includes/adminTheme.xhtml" />
+        <ui:include src="includes/adminSidebar.xhtml" />
+
+        <h:form id="billingForm">
+            <div class="content">
+
+                <!-- CENTERED HEADER -->
+                <h2 class="mb-4 fw-bold text-center">Billing History</h2>
+
+                <!-- ALERT MESSAGES -->
+                <h:panelGroup id="alertPanel" layout="block" rendered="#{not empty adminBillingBean.message}">
+                    <div class="alert alert-#{adminBillingBean.messageType} alert-dismissible fade show">
+                        <strong>
+                            #{adminBillingBean.lastAction eq 'markPaid' ? 'Success: Bill marked as PAID successfully!' : 
+                              adminBillingBean.lastAction eq 'markUnpaid' ? 'Success: Bill marked as UNPAID successfully!' : 'Notice:'}
+                        </strong>
+                        #{adminBillingBean.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" 
+                                onclick="#{adminBillingBean.clearMessage()}"></button>
+                    </div>
+                </h:panelGroup>
+
+                <!-- CENTERED TABS -->
+                <ul class="nav nav-tabs justify-content-center" id="billingTabs">
+                    <li class="nav-item">
+                        <h:commandLink value="Unpaid Bills" action="#{adminBillingBean.switchTab('unpaid')}" 
+                                       styleClass="nav-link #{adminBillingBean.activeTab eq 'unpaid' ? 'active' : ''}">
+                            <f:ajax render="@form" />
+                        </h:commandLink>
+                    </li>
+                    <li class="nav-item">
+                        <h:commandLink value="Paid Bills" action="#{adminBillingBean.switchTab('paid')}" 
+                                       styleClass="nav-link #{adminBillingBean.activeTab eq 'paid' ? 'active' : ''}">
+                            <f:ajax render="@form" />
+                        </h:commandLink>
+                    </li>
+                </ul>
+
+                <!-- TAB CONTENT -->
+                <div class="tab-content pt-3">
+                    <div class="tab-pane fade #{adminBillingBean.activeTab eq 'unpaid' ? 'show active' : ''}" id="unpaid">
+                        <ui:include src="unpaidBills.xhtml" />
+                    </div>
+                    <div class="tab-pane fade #{adminBillingBean.activeTab eq 'paid' ? 'show active' : ''}" id="paid">
+                        <ui:include src="paidBills.xhtml" />
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </h:body>
+</ui:composition>

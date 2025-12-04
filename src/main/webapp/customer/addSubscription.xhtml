@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <ui:include src="/customer/includes/customerTheme.xhtml" />
+    <title>Add Subscription</title>
+
+    <style>
+        .page-container {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        @media (max-width: 576px) {
+            .page-container { padding: 10px; }
+    }
+    </style>
+</h:head>
+
+<h:body>
+
+    <!-- NAVBAR -->
+    <ui:include src="/customer/includes/customerNavbar.xhtml" />
+
+    <div class="page-container">
+
+        <div class="card shadow-sm p-4" style="border-radius: 12px;">
+            <h2 class="text-center mb-4">Add New Subscription</h2>
+
+            <!-- Error Messages -->
+            <h:messages style="color:red; margin-bottom:15px;" />
+
+            <h:form id="addForm">
+
+                <!-- SERVICE SELECT -->
+                <div class="mb-3">
+                    <label class="form-label">Select Service:</label>
+
+                    <h:selectOneMenu id="serviceSelect"
+                                     value="#{addSubscriptionBean.serviceId}"
+                                     styleClass="form-select"
+                                     onchange="updateServiceInfo()"
+                                     required="true">
+
+                        <f:selectItem itemValue="#{null}" itemLabel="-- Select Service --" />
+
+                        <f:selectItems value="#{serviceBean.services}"
+                                       var="svc"
+                                       itemValue="#{svc.id}"
+                                       itemLabel="#{svc.name}" />
+
+                    </h:selectOneMenu>
+                </div>
+
+                <!-- SERVICE CHARGES -->
+                <div id="chargesBox" class="mb-3" style="display:none;">
+                    <label class="form-label">Charges:</label>
+                    <input id="serviceCharge" type="text" class="form-control" readonly="true" />
+                </div>
+
+                <!-- SERVICE DURATION -->
+                <div id="durationBox" class="mb-3" style="display:none;">
+                    <label class="form-label">Duration:</label>
+                    <input id="serviceDuration" type="text" class="form-control" readonly="true" />
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <h:commandButton value="Add Subscription"
+                                     action="#{addSubscriptionBean.addSubscription}"
+                                     styleClass="btn btn-success flex-grow-1" />
+
+                    <h:link outcome="subscriptions"
+                            value="Cancel"
+                            styleClass="btn btn-secondary flex-grow-1"/>
+                </div>
+
+                <!-- Hidden fields to expose service data for JS -->
+                <ui:repeat value="#{serviceBean.services}" var="s">
+                    <input type="hidden"
+                           id="svc_#{s.id}_price"
+                           value="#{s.charge}" />
+
+                    <input type="hidden"
+                           id="svc_#{s.id}_duration"
+                           value="#{s.durationValue} #{s.durationUnit}" />
+                </ui:repeat>
+
+            </h:form>
+
+        </div>
+    </div>
+
+    <!-- JS: Updates charge + duration -->
+    <script>
+        function updateServiceInfo() {
+            const select = document.getElementById("addForm:serviceSelect");
+            const selectedId = select.value;
+
+            const chargesBox = document.getElementById("chargesBox");
+            const durationBox = document.getElementById("durationBox");
+
+            if (!selectedId) {
+                chargesBox.style.display = "none";
+                durationBox.style.display = "none";
+                return;
+            }
+
+            const price = document.getElementById("svc_" + selectedId + "_price").value;
+            const duration = document.getElementById("svc_" + selectedId + "_duration").value;
+
+            document.getElementById("serviceCharge").value = price + " KES";
+            document.getElementById("serviceDuration").value = duration;
+
+            chargesBox.style.display = "block";
+            durationBox.style.display = "block";
+        }
+    </script>
+
+</h:body>
+</html>

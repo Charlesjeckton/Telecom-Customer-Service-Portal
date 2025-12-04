@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="en"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <head>
+        <title>My Subscriptions</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Include Theme -->
+        <ui:include src="/customer/includes/customerTheme.xhtml" />
+
+        <style>
+    /* ===== MAIN CONTENT WRAPPER ===== */
+    .main-content {
+        padding: 28px 24px;
+        max-width: 1100px;
+        margin: 20px auto;
+    }
+
+    /* Smaller padding on tablets */
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 20px 16px;
+            margin: 15px auto;
+        }
+    }
+
+    /* Compact padding on small screens */
+    @media (max-width: 576px) {
+        .main-content {
+            padding: 15px 10px;
+            margin: 10px auto;
+        }
+    }
+
+    /* ===== TABLE STYLING ===== */
+    th, td {
+        white-space: nowrap;
+        vertical-align: middle;
+        padding: 10px 12px !important;
+    }
+
+    th {
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    /* ===== BADGES ===== */
+    .badge-active {
+        background-color: #28a745 !important;
+    }
+
+    .badge-expired {
+        background-color: #6c757d !important;
+    }
+
+    /* ===== ADD BUTTON ===== */
+    .add-btn {
+        padding: 10px 22px;
+        font-weight: 600;
+        font-size: 15px;
+        border-radius: 6px;
+    }
+
+    /* Full width on smaller screens */
+    @media (max-width: 767px) {
+        .add-btn {
+            width: 100% !important;
+            margin-top: 3px;
+        }
+    }
+
+    /* ===== HEADER SECTION SPACING ===== */
+    .subscription-header {
+        gap: 5px;
+    }
+
+    @media (max-width: 576px) {
+        .subscription-header h2 {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+    </head>
+
+    <body>
+
+        <!-- Navbar -->
+        <ui:include src="/customer/includes/customerNavbar.xhtml" />
+
+        <div class="main-content">
+
+            <!-- Header + Add Button -->
+<div class="subscription-header mb-4 d-flex flex-column flex-md-row align-items-center justify-content-between">
+
+    <h2 class="fw-bold m-0 text-center text-md-start">
+        My Subscriptions
+    </h2>
+
+    <a href="addSubscription.xhtml"
+       class="btn btn-primary add-btn mt-3 mt-md-0">
+        + Add New
+    </a>
+
+</div>
+
+
+
+            <h:panelGroup rendered="#{not empty flash.flash_message}">
+                <div class="alert alert-dismissible fade show" 
+                     role="alert"
+                     style="#{flash.flash_type eq 'success' ? 'background-color:#d4edda;' : 'background-color:#f8d7da;'}">
+
+                    <strong>
+                        <h:outputText value="#{flash.flash_type eq 'success' ? 'Success:' : 'Error:'}" />
+                    </strong>
+
+                    <h:outputText value="#{flash.flash_message}" />
+
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </h:panelGroup>
+
+
+
+            <!-- Subscriptions Table -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Service Name</th>
+                                    <th>Purchase Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <!-- SHOW SUBSCRIPTIONS -->
+                                <ui:repeat value="#{subscriptionBean.subscriptions}" var="s">
+                                    <tr>
+                                        <td>#{s.serviceName}</td>
+
+                                        <td>
+                                            <h:outputText value="#{s.purchaseDate}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </td>
+
+                                        <td>
+                                            <h:outputText value="#{s.expiryDate}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </h:outputText>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge #{s.status eq 'ACTIVE' ? 'bg-success' : 'bg-secondary'}">
+                                                #{s.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+
+                                <!-- SHOW ONLY WHEN EMPTY -->
+                                <h:panelGroup rendered="#{empty subscriptionBean.subscriptions}">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">
+                                            No subscriptions found.
+                                        </td>
+                                    </tr>
+                                </h:panelGroup>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>
