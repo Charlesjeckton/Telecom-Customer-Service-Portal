@@ -4,14 +4,18 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       lang="en">
-    
+
     <head>
         <meta charset="UTF-8" />
         <title>Customer Dashboard</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <!-- Theme Include -->
+        <!-- Theme -->
         <ui:include src="/customer/includes/customerTheme.xhtml" />
+
+        <!-- PrimeFaces Resources -->
+        <h:outputStylesheet library="primefaces" name="primeicons/primeicons.css" />
+        <h:outputScript library="primefaces" name="primefaces.js" />
 
         <style>
             body {
@@ -19,39 +23,31 @@
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 color: #333;
             }
-
             .page-container {
                 max-width: 900px;
-                margin: 20px auto 40px auto;     /* Default for desktops/laptops */
+                margin: 20px auto 40px auto;
                 background: white;
                 padding: 35px;
                 border-radius: 12px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
-
-            /* 📱 Smaller margin on tablets */
             @media (max-width: 768px) {
                 .page-container {
-                    margin: 12px auto 30px auto;  /* Less top and bottom margin */
-                    padding: 25px;                /* Slightly reduced padding */
+                    margin: 12px auto 30px auto;
+                    padding: 25px;
                 }
             }
-
-            /* 📲 Very small screens (phones) */
             @media (max-width: 480px) {
                 .page-container {
-                    margin: 8px auto 25px auto;   /* Minimal top margin */
-                    padding: 20px;                /* Compact padding */
+                    margin: 8px auto 25px auto;
+                    padding: 20px;
                 }
             }
-
-
             .menu-card {
                 border-radius: 10px;
                 transition: transform 0.3s, box-shadow 0.3s;
                 cursor: pointer;
             }
-
             .menu-card:hover {
                 transform: translateY(-4px);
                 box-shadow: 0 4px 20px rgba(0,0,0,0.15);
@@ -61,8 +57,11 @@
 
     <body>
 
-        <!-- NAVBAR INCLUDE -->
+        <!-- NAVBAR -->
         <ui:include src="/customer/includes/customerNavbar.xhtml" />
+
+        <!-- PrimeFaces usage (prevents unused warning) -->
+        <p:outputPanel style="display:none;" />
 
         <!-- MAIN CONTENT -->
         <div class="page-container">
@@ -73,7 +72,6 @@
             <p>Select an option below:</p>
 
             <div class="row mt-4">
-
                 <div class="col-md-4 mb-4">
                     <a href="services.xhtml" class="text-decoration-none text-dark">
                         <div class="card menu-card p-4 text-center">
@@ -105,11 +103,9 @@
                         </div>
                     </a>
                 </div>
-
             </div>
 
         </div>
 
     </body>
-
 </html>
