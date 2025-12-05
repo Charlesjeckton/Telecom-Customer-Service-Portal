@@ -6,29 +6,41 @@
 
     <h:head>
         <title>Reports &amp; Charts - Admin Panel</title>
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <style>
+            body {
+                background: #f2f4f7;
+            }
+
+            /* Main content wrapper */
+            .content {
+                padding: 40px 20px;
+                margin-left: 260px; /* matches sidebar width */
+            }
+
+            /* Smart card style (same as service-card) */
             .chart-card {
-                background: white;
-                border-radius: 12px;
-                padding: 20px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                background: #ffffff;
+                border-radius: 16px;
+                padding: 25px 22px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.10);
                 margin-bottom: 30px;
             }
 
-            .chart-title {
-                font-weight: bold;
-                margin-bottom: 15px;
-                text-align: center; /* CENTERED */
+            /* Summary card text */
+            .chart-card h5 {
+                font-weight: 600;
+                margin-bottom: 5px;
             }
 
-            @media (max-width: 768px) {
-                h2 {
-                    font-weight: 700;
-                    margin-top: 40px;
-                    margin-bottom: 6px;
-                }
+            /* Title for charts */
+            .chart-title {
+                text-align: center;
+                font-weight: 700;
+                margin-bottom: 15px;
+                color: #343a40;
             }
 
             .chart-wrapper {
@@ -36,54 +48,85 @@
                 margin: 0 auto;
             }
 
-            @media (min-width: 1200px) {
-                .chart-wrapper {
-                    max-width: 800px;
+            canvas {
+                max-height: 350px !important;
+            }
+
+            /* RESPONSIVE ============================ */
+            @media (max-width: 900px) {
+                .content {
+                    margin-left: 0 !important;
                 }
             }
 
-            canvas {
-                max-height: 350px !important;
+            @media (max-width: 600px) {
+                .chart-wrapper {
+                    max-width: 100%;
+                }
+                .chart-card {
+                    padding: 18px 15px;
+                }
+            }
+            /* RESPONSIVE HEADING WITH SIDEBAR TOGGLE */
+            @media (max-width: 600px) {
+                h2.text-center {
+                    font-size: 22px;
+                    margin-top: 35px;   /* push down from toggle */
+                    margin-bottom: 15px;
+                    padding: 0 10px;    /* prevent text cutting */
+                    line-height: 1.3;
+                }
+            }
+
+            /* Very small screens like 355px */
+            @media (max-width: 380px) {
+                h2.text-center {
+                    font-size: 20px;
+                    margin-top: 50px;
+                }
             }
         </style>
     </h:head>
 
     <h:body>
-        <ui:include src="includes/adminTheme.xhtml" />
-        <ui:include src="includes/adminSidebar.xhtml" />
+
+        <ui:include src="includes/adminTheme.xhtml"/>
+        <ui:include src="includes/adminSidebar.xhtml"/>
 
         <div class="content">
 
-            <!-- MAIN HEADER CENTERED -->
+            <!-- PAGE HEADER -->
             <h2 class="fw-bold mb-4 text-center">Reports &amp; Billing Analytics</h2>
 
             <!-- ======================= SUMMARY CARDS ======================= -->
             <div class="row mb-4">
-                <div class="col-md-4">
+
+                <div class="col-md-4 mb-3">
                     <div class="chart-card text-center">
-                        <h5 class="text-center">Total Bills</h5>
-                        <h2 class="text-primary text-center">#{adminReportsBean.totalBills}</h2>
+                        <h5>Total Bills</h5>
+                        <h2 class="text-primary">#{adminReportsBean.totalBills}</h2>
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4 mb-3">
                     <div class="chart-card text-center">
-                        <h5 class="text-center">Paid Bills</h5>
-                        <h2 class="text-success text-center">#{adminReportsBean.paidCount}</h2>
+                        <h5>Paid Bills</h5>
+                        <h2 class="text-success">#{adminReportsBean.paidCount}</h2>
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-4 mb-3">
                     <div class="chart-card text-center">
-                        <h5 class="text-center">Unpaid Bills</h5>
-                        <h2 class="text-danger text-center">#{adminReportsBean.unpaidCount}</h2>
+                        <h5>Unpaid Bills</h5>
+                        <h2 class="text-danger">#{adminReportsBean.unpaidCount}</h2>
                     </div>
                 </div>
+
             </div>
 
             <!-- ======================= PIE CHART ======================= -->
             <div class="chart-card">
-                <h4 class="chart-title text-center">Paid vs Unpaid Bills</h4>
+                <h4 class="chart-title">Paid vs Unpaid Bills</h4>
                 <div class="chart-wrapper">
                     <canvas id="pieChart"></canvas>
                 </div>
@@ -91,38 +134,40 @@
 
             <!-- ======================= LINE CHART ======================= -->
             <div class="chart-card">
-                <h4 class="chart-title text-center">Monthly Billing Trend</h4>
+                <h4 class="chart-title">Monthly Billing Trend</h4>
                 <div class="chart-wrapper">
                     <canvas id="lineChart"></canvas>
                 </div>
             </div>
+
         </div>
 
+        <!-- =================== CHART SCRIPTS =================== -->
         <script>
-            // ================= PIE CHART =================
+            // PIE CHART
             new Chart(document.getElementById('pieChart'), {
                 type: 'pie',
                 data: {
                     labels: ['Paid', 'Unpaid'],
                     datasets: [{
-                        data: [#{adminReportsBean.paidCount}, #{adminReportsBean.unpaidCount}],
-                        backgroundColor: ['#28a745', '#dc3545']
-                    }]
+                            data: [#{adminReportsBean.paidCount}, #{adminReportsBean.unpaidCount}],
+                            backgroundColor: ['#28a745', '#dc3545']
+                        }]
                 }
             });
 
-            // ================= LINE CHART =================
+            // LINE CHART
             new Chart(document.getElementById('lineChart'), {
                 type: 'line',
                 data: {
                     labels: #{adminReportsBean.monthLabels},
                     datasets: [{
-                        label: 'Total Billing (KES)',
-                        data: #{adminReportsBean.monthValues},
-                        borderWidth: 3,
-                        borderColor: '#007bff',
-                        tension: 0.3
-                    }]
+                            label: 'Total Billing (KES)',
+                            data: #{adminReportsBean.monthValues},
+                            borderWidth: 3,
+                            borderColor: '#007bff',
+                            tension: 0.3
+                        }]
                 }
             });
         </script>

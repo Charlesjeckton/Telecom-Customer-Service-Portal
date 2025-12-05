@@ -5,163 +5,183 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 
-<h:head>
-    <title>Add New Service - Admin Panel</title>
+    <h:head>
+        <title>Add New Service - Admin Panel</title>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+        <!-- Bootstrap -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
 
-    <!-- Prime Icons -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css"/>
+        <!-- Prime Icons -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css"/>
 
-    <style>
-        body {
-            background: #f2f4f7;
-        }
-
-        .center-wrapper {
-            display: flex;
-            justify-content: center;
-            padding: 40px 15px;
-            margin-left: 260px;
-        }
-
-        .service-card {
-            width: 100%;
-            max-width: 480px;
-            padding: 25px 22px;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.10);
-        }
-
-        h2 {
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #343a40;
-        }
-
-        @media (max-width: 768px) {
-            .center-wrapper {
-                margin-left: 0 !important;
+        <style>
+            body {
+                background: #f2f4f7;
             }
-        }
 
-        .input-group-text {
-            background: #f1f1f1;
-            border-right: none;
-        }
+            .center-wrapper {
+                display: flex;
+                justify-content: center;
+                padding: 40px 15px;
+                margin-left: 260px;
+            }
 
-        .form-control, .form-select {
-            background: #f1f1f1;
-            border-left: none;
-        }
+            .service-card {
+                width: 100%;
+                max-width: 480px;
+                padding: 25px 22px;
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+            }
 
-        .form-control:focus, .form-select:focus {
-            background: #ffffff;
-            border-color: #0d6efd;
-            box-shadow: 0 0 4px rgba(13, 110, 253, 0.4);
-        }
+            h2 {
+                font-weight: 700;
+                margin-bottom: 20px;
+                text-align: center;
+                color: #343a40;
+            }
 
-        .alert {
-            border-radius: 8px;
-        }
-    </style>
-</h:head>
+            @media (max-width: 768px) {
+                .center-wrapper {
+                    margin-left: 0 !important;
+                }
+            }
 
-<h:body>
+            .input-group-text {
+                background: #f1f1f1;
+                border-right: none;
+            }
 
-    <!-- Theme + sidebar -->
-    <ui:include src="/admin/includes/adminTheme.xhtml"/>
-    <ui:include src="/admin/includes/adminSidebar.xhtml"/>
+            .form-control, .form-select {
+                background: #f1f1f1;
+                border-left: none;
+            }
 
-    <div class="center-wrapper">
+            .form-control:focus, .form-select:focus {
+                background: #ffffff;
+                border-color: #0d6efd;
+                box-shadow: 0 0 4px rgba(13, 110, 253, 0.4);
+            }
 
-        <div class="service-card">
+            .alert {
+                border-radius: 8px;
+            }
+            /* RESPONSIVE H2 TITLE FOR SMALL SCREENS */
+            @media (max-width: 600px) {
+                .service-card h2 {
+                    font-size: 22px;
+                    margin-top: 55px;  /* space created for sidebar toggle */
+                    margin-bottom: 18px;
+                    line-height: 1.3;
+                    padding: 0 10px;
+                }
+            }
 
-            <h2>Add New Service</h2>
+            /* Very small phones (355px – 380px) */
+            @media (max-width: 380px) {
+                .service-card h2 {
+                    font-size: 20px;
+                    margin-top: 60px;  /* extra spacing under toggle */
+                }
+            }
 
-            <!-- ERROR MESSAGE -->
-            <h:panelGroup rendered="#{not empty adminServiceBean.errorMessage}">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h:outputText value="#{adminServiceBean.errorMessage}"/>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </h:panelGroup>
 
-            <!-- FORM -->
-            <h:form>
+        </style>
+    </h:head>
 
-                <!-- Service Name -->
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="pi pi-file"></i></span>
-                    <h:inputText value="#{adminServiceBean.name}"
-                                 required="true"
-                                 styleClass="form-control"
-                                 p:placeholder="Service Name"/>
-                </div>
+    <h:body>
 
-                <!-- Description -->
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="pi pi-align-left"></i></span>
-                    <h:inputTextarea value="#{adminServiceBean.description}"
+        <!-- Theme + sidebar -->
+        <ui:include src="/admin/includes/adminTheme.xhtml"/>
+        <ui:include src="/admin/includes/adminSidebar.xhtml"/>
+
+        <div class="center-wrapper">
+
+            <div class="service-card">
+
+                <h2>Add New Service</h2>
+
+                <!-- ERROR MESSAGE -->
+                <h:panelGroup rendered="#{not empty adminServiceBean.errorMessage}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <h:outputText value="#{adminServiceBean.errorMessage}"/>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
+
+                <!-- FORM -->
+                <h:form>
+
+                    <!-- Service Name -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="pi pi-file"></i></span>
+                        <h:inputText value="#{adminServiceBean.name}"
                                      required="true"
-                                     rows="3"
                                      styleClass="form-control"
-                                     p:placeholder="Description"/>
-                </div>
+                                     p:placeholder="Service Name"/>
+                    </div>
 
-                <!-- Charges -->
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="pi pi-money-bill"></i></span>
-                    <h:inputText value="#{adminServiceBean.charge}"
-                                 required="true"
-                                 styleClass="form-control"
-                                 p:type="number"
-                                 p:step="0.01"
-                                 p:placeholder="Charges (KES)"/>
-                </div>
+                    <!-- Description -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="pi pi-align-left"></i></span>
+                        <h:inputTextarea value="#{adminServiceBean.description}"
+                                         required="true"
+                                         rows="3"
+                                         styleClass="form-control"
+                                         p:placeholder="Description"/>
+                    </div>
 
-                <!-- Duration Value -->
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="pi pi-clock"></i></span>
-                    <h:inputText value="#{adminServiceBean.durationValue}"
-                                 required="true"
-                                 styleClass="form-control"
-                                 p:type="number"
-                                 p:placeholder="Duration Value"/>
-                </div>
-
-                <!-- Duration Unit -->
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="pi pi-calendar"></i></span>
-                    <h:selectOneMenu value="#{adminServiceBean.durationUnit}"
+                    <!-- Charges -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="pi pi-money-bill"></i></span>
+                        <h:inputText value="#{adminServiceBean.charge}"
                                      required="true"
-                                     styleClass="form-select form-control">
-                        <f:selectItem itemLabel="-- Select Duration Unit --" itemValue=""/>
-                        <f:selectItem itemLabel="Hours" itemValue="HOUR"/>
-                        <f:selectItem itemLabel="Days" itemValue="DAY"/>
-                        <f:selectItem itemLabel="Weeks" itemValue="WEEK"/>
-                        <f:selectItem itemLabel="Months" itemValue="MONTH"/>
-                        <f:selectItem itemLabel="Years" itemValue="YEAR"/>
-                    </h:selectOneMenu>
-                </div>
+                                     styleClass="form-control"
+                                     p:type="number"
+                                     p:step="0.01"
+                                     p:placeholder="Charges (KES)"/>
+                    </div>
 
-                <!-- Buttons -->
-                <div class="d-grid gap-2 mt-3">
-                    <h:commandButton value="Add Service"
-                                     action="#{adminServiceBean.addService}"
-                                     styleClass="btn btn-primary"/>
-                    <a href="services.xhtml" class="btn btn-secondary">Cancel</a>
-                </div>
+                    <!-- Duration Value -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="pi pi-clock"></i></span>
+                        <h:inputText value="#{adminServiceBean.durationValue}"
+                                     required="true"
+                                     styleClass="form-control"
+                                     p:type="number"
+                                     p:placeholder="Duration Value"/>
+                    </div>
 
-            </h:form>
+                    <!-- Duration Unit -->
+                    <div class="input-group mb-3">
+                        <span class="input-group-text"><i class="pi pi-calendar"></i></span>
+                        <h:selectOneMenu value="#{adminServiceBean.durationUnit}"
+                                         required="true"
+                                         styleClass="form-select form-control">
+                            <f:selectItem itemLabel="-- Select Duration Unit --" itemValue=""/>
+                            <f:selectItem itemLabel="Hours" itemValue="HOUR"/>
+                            <f:selectItem itemLabel="Days" itemValue="DAY"/>
+                            <f:selectItem itemLabel="Weeks" itemValue="WEEK"/>
+                            <f:selectItem itemLabel="Months" itemValue="MONTH"/>
+                            <f:selectItem itemLabel="Years" itemValue="YEAR"/>
+                        </h:selectOneMenu>
+                    </div>
 
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2 mt-3">
+                        <h:commandButton value="Add Service"
+                                         action="#{adminServiceBean.addService}"
+                                         styleClass="btn btn-primary"/>
+                        <a href="services.xhtml" class="btn btn-secondary">Cancel</a>
+                    </div>
+
+                </h:form>
+
+            </div>
         </div>
-    </div>
 
-</h:body>
+    </h:body>
 </html>

@@ -21,7 +21,7 @@
             background: #f2f4f7;
         }
 
-        /* Center like Add Service */
+        /* Center wrapper (same as Add Service) */
         .center-wrapper {
             display: flex;
             justify-content: center;
@@ -29,7 +29,7 @@
             margin-left: 260px;
         }
 
-        /* Same small smart card */
+        /* Card (same styling as Add Service) */
         .service-card {
             width: 100%;
             max-width: 480px;
@@ -51,7 +51,8 @@
             border-right: none;
         }
 
-        .form-control, .form-select {
+        .form-control, 
+        .form-select {
             background: #f1f1f1;
             border-left: none;
         }
@@ -67,7 +68,7 @@
             border-radius: 8px;
         }
 
-        /* Mobile */
+        /* Mobile (same as add service) */
         @media (max-width: 768px) {
             .center-wrapper {
                 margin-left: 0 !important;
@@ -94,7 +95,7 @@
 
             <h2>Edit Service</h2>
 
-            <!-- ERROR MESSAGE -->
+            <!-- Error message -->
             <h:panelGroup rendered="#{not empty adminServiceBean.errorMessage}">
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h:outputText value="#{adminServiceBean.errorMessage}" />
@@ -102,13 +103,13 @@
                 </div>
             </h:panelGroup>
 
-            <!-- SERVICE NOT FOUND -->
+            <!-- Service not found -->
             <h:panelGroup rendered="#{adminServiceBean.selectedService == null}">
                 <div class="alert alert-danger mt-3">Service not found.</div>
                 <h:link outcome="services.xhtml" styleClass="btn btn-secondary mt-3">Back</h:link>
             </h:panelGroup>
 
-            <!-- FORM -->
+            <!-- Edit form -->
             <h:panelGroup rendered="#{adminServiceBean.selectedService != null}">
                 <h:form>
 
