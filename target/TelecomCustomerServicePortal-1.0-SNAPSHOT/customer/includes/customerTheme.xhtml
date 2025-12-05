@@ -3,158 +3,152 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <h:head>
-        <!-- Meta tags -->
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<h:head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <!-- Page Title -->
-        <title>Customer Dashboard</title>
+    <!-- Page Title -->
+    <title>Customer Dashboard</title>
 
-        <!-- Bootstrap JS Required for alert dismiss -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="#{request.contextPath}/assets/css/customer.css" />
 
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-              rel="stylesheet" />
+    <!-- Custom Page Styles -->
+    <style>
+        body {
+            background: #DCDCDC;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
 
-        <!-- Optional: Custom CSS -->
-        <link rel="stylesheet" href="#{request.contextPath}/assets/css/customer.css" />
+        .page-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
-        <!-- jQuery (optional) -->
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+        .menu-card {
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
 
-        <!-- Bootstrap JS Bundle -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
 
-        <!-- Custom Page Styles -->
-        <style>
-            body {
-                background: #f1f4f9;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                color: #333;
-            }
+        .table th, .table td {
+            vertical-align: middle;
+        }
 
+        .btn {
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar {
+            border-bottom: 2px solid #0d6efd;
+            padding: 0.8rem 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .navbar .navbar-brand {
+            letter-spacing: 1px;
+            text-transform: capitalize;
+            color: #ffffff !important;
+            font-weight: bold;
+            font-size: 1.25rem;
+            font-style: italic;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            margin: 0 0.5rem;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            transition: color 0.3s, background 0.3s;
+            color: #ffffff !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffd700 !important;
+            background-color: rgba(255,255,255,0.15);
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #ffd700 !important;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #dc3545 !important;
+            color: #fff !important;
+            padding: 6px 14px !important;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c82333 !important;
+            transform: translateY(-2px);
+        }
+
+        .form-control, .form-select {
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 8px rgba(13,110,253,0.25);
+        }
+
+        .card {
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 576px) {
             .page-container {
-                max-width: 900px;
-                margin: 40px auto;
-                background: white;
-                padding: 35px;
-                border-radius: 12px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                padding: 20px;
+                margin: 20px 10px;
             }
+        }
+    </style>
+</h:head>
 
-            .menu-card {
-                border-radius: 10px;
-                transition: transform 0.3s, box-shadow 0.3s;
-                cursor: pointer;
-            }
+<h:body>
 
-            .menu-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            }
+    <!-- This file is included using ui:include -->
 
-            .table th, .table td {
-                vertical-align: middle;
-            }
+    <!-- JS at Bottom (no duplicates) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-            .btn {
-                transition: all 0.3s;
-            }
-
-            .btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-
-            .navbar {
-                border-bottom: 2px solid #0d6efd;
-                padding: 0.8rem 1rem;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            }
-
-            .navbar .navbar-brand {
-                letter-spacing: 1px;
-                text-transform: capitalize;
-                color: #ffffff !important;
-                font-weight: bold;
-                font-size: 1.25rem;
-                font-style: italic;
-                transition: color 0.3s;
-            }
-
-            .navbar-nav .nav-link {
-                font-weight: 500;
-                margin-left: 0.5rem;
-                margin-right: 0.5rem;
-                border-radius: 6px;
-                padding: 0.5rem 0.75rem;
-                transition: color 0.3s, background 0.3s;
-                color: #ffffff !important;
-            }
-
-            .navbar-nav .nav-link:hover {
-                color: #ffd700 !important;
-                background-color: rgba(255,255,255,0.15);
-            }
-
-            .navbar-nav .nav-link.active {
-                color: #ffd700 !important;
-                font-weight: 600;
-            }
-
-            .logout-btn {
-                background: #dc3545 !important;
-                color: #fff !important;
-                padding: 6px 14px !important;
-                border-radius: 6px;
-                font-weight: 600;
-                transition: 0.2s ease;
-            }
-
-            .logout-btn:hover {
-                background: #c82333 !important;
-                transform: translateY(-2px);
-            }
-
-            .form-control, .form-select {
-                border-radius: 6px;
-                transition: all 0.3s;
-            }
-
-            .form-control:focus, .form-select:focus {
-                border-color: #0d6efd;
-                box-shadow: 0 0 8px rgba(13,110,253,0.25);
-            }
-
-            .card {
-                border-radius: 12px;
-                transition: transform 0.3s, box-shadow 0.3s;
-            }
-
-            .card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-            }
-
-            .alert {
-                border-radius: 8px;
-                font-weight: 500;
-            }
-
-            @media (max-width: 576px) {
-                .page-container {
-                    padding: 20px;
-                    margin: 20px 10px;
-                }
-            }
-
-        </style>
-    </h:head>
-
-    <h:body>
-        <!-- This file is included using ui:include -->
-    </h:body>
+</h:body>
 </html>
