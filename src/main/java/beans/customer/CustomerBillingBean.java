@@ -27,7 +27,7 @@ public class CustomerBillingBean implements Serializable {
 
     private String activeTab = "unpaid";
 
-    // Message fields used in UI
+    // Message fields
     private String message;
     private String messageType;   // success | danger
 
@@ -37,18 +37,19 @@ public class CustomerBillingBean implements Serializable {
     }
 
     // =============================================
-    // LOAD CUSTOMER BILLS
+    // LOAD CUSTOMER DATA
     // =============================================
     public void loadData() {
         Integer customerId = getLoggedCustomerId();
 
-        if (customerId != null) {
-            paidList = billingDAO.getPaidBillsByCustomer(customerId);
-            unpaidList = billingDAO.getUnpaidBillsByCustomer(customerId);
-        } else {
+        if (customerId == null) {
             paidList = new ArrayList<>();
             unpaidList = new ArrayList<>();
+            return;
         }
+
+        paidList = billingDAO.getPaidBillsByCustomer(customerId);
+        unpaidList = billingDAO.getUnpaidBillsByCustomer(customerId);
     }
 
     // =============================================
@@ -58,8 +59,9 @@ public class CustomerBillingBean implements Serializable {
         FacesContext ctx = FacesContext.getCurrentInstance();
         if (ctx == null) return null;
 
-        LoginBean loginBean = (LoginBean)
-                ctx.getExternalContext().getSessionMap().get("loginBean");
+        LoginBean loginBean = (LoginBean) ctx.getExternalContext()
+                                             .getSessionMap()
+                                             .get("loginBean");
 
         if (loginBean == null || loginBean.getCustomerId() == 0) {
             return null;
@@ -77,7 +79,7 @@ public class CustomerBillingBean implements Serializable {
     }
 
     // =============================================
-    // MARK AS UNPAID
+    // MARK BILL AS UNPAID
     // =============================================
     public void markBillUnpaid(Integer billId) {
         if (billId == null) {
@@ -97,7 +99,7 @@ public class CustomerBillingBean implements Serializable {
     }
 
     // =============================================
-    // MARK AS PAID
+    // MARK BILL AS PAID
     // =============================================
     public void markBillPaid(Integer billId) {
         if (billId == null) {
@@ -132,10 +134,20 @@ public class CustomerBillingBean implements Serializable {
         setMessage(msg, "danger");
     }
 
-    public void clearMessage() {
-        this.message = null;
-        this.messageType = null;
+    /**
+     * Called by f:event before rendering the page.
+     * Ensures alerts do NOT stay on refresh.
+     */
+   public void clearMessage() {
+    // Only clear when NOT an AJAX request
+    if (!FacesContext.getCurrentInstance().isPostback() &&
+        !FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
+
+        message = null;
+        messageType = null;
     }
+}
+
 
     // =============================================
     // GETTERS FOR XHTML
