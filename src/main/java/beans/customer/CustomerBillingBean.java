@@ -2,12 +2,11 @@ package beans.customer;
 
 import beans.LoginBean;
 import dao.BillingDAO;
-
 import api.mpesa.MpesaService;
 import api.mpesa.StkPushResponse;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.view.ViewScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Named("customerBillingBean")
-@SessionScoped
+@ViewScoped
 public class CustomerBillingBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,9 +41,28 @@ public class CustomerBillingBean implements Serializable {
     private String customerPhone;
     private String checkoutRequestId;
 
+    // IMPORTANT: Used to prevent refresh-triggered STK calls
+    private boolean paymentInitiated = false;
+
     @PostConstruct
     public void init() {
         loadData();
+    }
+
+    // ===================================================
+    // SAFE MESSAGE CLEARING (PAGE REFRESH ONLY)
+    // ===================================================
+    public void preRender() {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+
+        boolean isPostback = ctx.isPostback();
+        boolean isAjax = ctx.getPartialViewContext().isAjaxRequest();
+
+        // Clear messages ONLY on full browser refresh
+        if (!isPostback && !isAjax && !paymentInitiated) {
+            message = null;
+            messageType = null;
+        }
     }
 
     // ===================================================
@@ -54,8 +72,8 @@ public class CustomerBillingBean implements Serializable {
         Integer customerId = getLoggedCustomerId();
 
         if (customerId == null) {
-            paidList = new ArrayList<>();
-            unpaidList = new ArrayList<>();
+            paidList.clear();
+            unpaidList.clear();
             return;
         }
 
@@ -63,9 +81,6 @@ public class CustomerBillingBean implements Serializable {
         unpaidList = billingDAO.getUnpaidBillsByCustomer(customerId);
     }
 
-    // ===================================================
-    // GET LOGGED CUSTOMER ID
-    // ===================================================
     private Integer getLoggedCustomerId() {
         FacesContext ctx = FacesContext.getCurrentInstance();
         if (ctx == null) return null;
@@ -80,25 +95,25 @@ public class CustomerBillingBean implements Serializable {
         return loginBean.getCustomerId();
     }
 
-    // ===================================================
-    // SWITCH TAB
-    // ===================================================
     public void switchTab(String tab) {
         this.activeTab = tab;
         loadData();
     }
 
     // ===================================================
-    // SELECT BILL
-    // ===================================================
-    public void selectBill(Billing bill) {
-        this.selectedBill = bill;
-    }
-
-    // ===================================================
-    // INITIATE STK PUSH
+    // INITIATE MPESA STK — SAFE VERSION
     // ===================================================
     public void initiateMpesaPayment() {
+
+        FacesContext ctx = FacesContext.getCurrentInstance();
+
+        // 🔥 IMPORTANT: prevent STK push during refresh
+        if (!ctx.isPostback()) {
+            System.out.println("DEBUG: STK PUSH BLOCKED — REFRESH DETECTED");
+            return;
+        }
+
+        paymentInitiated = true; // only true when user clicks button
 
         if (selectedBill == null) {
             setErrorMessage("No bill selected for payment.");
@@ -111,24 +126,19 @@ public class CustomerBillingBean implements Serializable {
         }
 
         try {
-            // ===============================
-            // FIX: M-Pesa requires integer amount
-            // ===============================
             int intAmount = (int) Math.ceil(selectedBill.getAmount());
             String amountStr = String.valueOf(intAmount);
 
-            System.out.println("DEBUG — Sending amount to M-Pesa: " + amountStr);
-
-            // Send STK Push request
             StkPushResponse response = mpesaService.initiateStkPush(
                     customerPhone,
-                    amountStr,                             // FIXED
+                    amountStr,
                     selectedBill.getServiceName(),
                     "BILL-" + selectedBill.getId()
             );
 
+            // Protect against HTML / plain string responses
             if (response == null) {
-                setErrorMessage("M-Pesa returned an empty response.");
+                setErrorMessage("M-Pesa returned an empty or invalid response.");
                 return;
             }
 
@@ -146,7 +156,7 @@ public class CustomerBillingBean implements Serializable {
                 setErrorMessage(
                         response.getResponseDescription() != null
                                 ? response.getResponseDescription()
-                                : "M-Pesa reported an unknown error."
+                                : "Unknown M-Pesa error occurred."
                 );
             }
 
@@ -157,7 +167,7 @@ public class CustomerBillingBean implements Serializable {
     }
 
     // ===================================================
-    // CALLBACK HANDLING
+    // CALLBACK
     // ===================================================
     public void finalizePaymentFromCallback(String mpesaCode) {
 
@@ -166,12 +176,18 @@ public class CustomerBillingBean implements Serializable {
             loadData();
         }
 
+        paymentInitiated = false; // reset
+
         setSuccessMessage("Payment successful! M-Pesa Code: " + mpesaCode);
     }
 
     // ===================================================
     // MESSAGE HANDLING
     // ===================================================
+    public void clearMessage() {
+        preRender(); // deprecated fallback
+    }
+
     private void setMessage(String msg, String type) {
         this.message = msg;
         this.messageType = type;
@@ -185,24 +201,11 @@ public class CustomerBillingBean implements Serializable {
         setMessage(msg, "danger");
     }
 
-    public void clearMessage() {
-        if (!FacesContext.getCurrentInstance().isPostback()
-                && !FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
-
-            message = null;
-            messageType = null;
-        }
-    }
-
-    // ===================================================
     // GETTERS & SETTERS
-    // ===================================================
     public List<Billing> getPaidList() { return paidList; }
     public List<Billing> getUnpaidList() { return unpaidList; }
-
     public String getMessage() { return message; }
     public String getMessageType() { return messageType; }
-
     public String getActiveTab() { return activeTab; }
 
     public Billing getSelectedBill() { return selectedBill; }
@@ -212,5 +215,4 @@ public class CustomerBillingBean implements Serializable {
     public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
 
     public String getCheckoutRequestId() { return checkoutRequestId; }
-
 }

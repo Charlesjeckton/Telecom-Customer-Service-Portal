@@ -5,33 +5,33 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui">
 
+    <!-- ====================================================== -->
+    <!-- CLEAR MESSAGE ONLY ON PAGE LOAD (NOT AJAX)            -->
+    <!-- ====================================================== -->
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{customerBillingBean.preRender}" />
+    </f:metadata>
+
     <style>
         .main-content {
             max-width: 1100px;
             margin: 0 auto;
             padding: 10px 20px;
         }
-
         @media (max-width: 576px) {
             .main-content { padding: 15px 10px; }
         }
-
         .table-responsive {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-
         th, td {
             white-space: nowrap;
             vertical-align: middle;
         }
+        .action-btn { width: 100%; }
 
-        .action-btn {
-            width: 100%;
-        }
-
-        /* Modal Enhancement */
         .payment-header {
             font-size: 1.2rem;
             font-weight: bold;
@@ -43,16 +43,22 @@
 
     <div class="main-content">
 
-        <!-- PRIMEFACES GROWL (GLOBAL MESSAGE) -->
+        <!-- PRIMEFACES GROWL -->
         <p:growl id="msgGrowl" showDetail="true" life="4000" />
 
-        <!-- GLOBAL MESSAGE AREA -->
+        <!-- ============================ -->
+        <!-- GLOBAL MESSAGES BOX         -->
+        <!-- ============================ -->
         <h:panelGroup id="msgArea">
             <ui:fragment rendered="#{not empty customerBillingBean.message}">
                 <div class="alert alert-#{customerBillingBean.messageType} alert-dismissible fade show">
                     <strong>
-                        <ui:fragment rendered="#{customerBillingBean.messageType eq 'success'}">Success:</ui:fragment>
-                        <ui:fragment rendered="#{customerBillingBean.messageType ne 'success'}">Error:</ui:fragment>
+                        <ui:fragment rendered="#{customerBillingBean.messageType eq 'success'}">
+                            Success:
+                        </ui:fragment>
+                        <ui:fragment rendered="#{customerBillingBean.messageType ne 'success'}">
+                            Error:
+                        </ui:fragment>
                     </strong>
                     #{customerBillingBean.message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -94,20 +100,22 @@
                                             </td>
 
                                             <td class="text-center">
-                                                <h:form id="payForm">
 
-                                                    <p:commandButton value="Pay Now"
+                                                <!-- Unique form inside repeat -->
+                                                <h:form id="payForm_#{bill.id}">
+                                                    <p:commandButton 
+                                                        value="Pay Now"
                                                         styleClass="btn btn-sm btn-success action-btn"
-                                                        onclick="PF('paymentDlg').show();"
                                                         process="@this"
                                                         update=":paymentForm"
-                                                        oncomplete="$('#phone').focus();"
-                                                        >
-                                                        <f:setPropertyActionListener value="#{bill}" 
-                                                             target="#{customerBillingBean.selectedBill}" />
-                                                    </p:commandButton>
+                                                        oncomplete="PF('paymentDlg').show(); $('#phone').focus();">
 
+                                                        <f:setPropertyActionListener 
+                                                            value="#{bill}" 
+                                                            target="#{customerBillingBean.selectedBill}" />
+                                                    </p:commandButton>
                                                 </h:form>
+
                                             </td>
                                         </tr>
                                     </ui:repeat>
@@ -134,19 +142,19 @@
 
     </div>
 
-
-    <!-- ============================= -->
-    <!-- PAYMENT MODAL (PrimeFaces)   -->
-    <!-- ============================= -->
-    <p:dialog id="paymentDialog" header="Confirm Payment" widgetVar="paymentDlg"
-              modal="true" resizable="false" draggable="false" closable="true"
+    <!-- ====================================================== -->
+    <!-- PAYMENT MODAL                                         -->
+    <!-- ====================================================== -->
+    <p:dialog id="paymentDialog"
+              header="Confirm Payment"
+              widgetVar="paymentDlg"
+              modal="true" resizable="false"
+              draggable="false" closable="true"
               width="420">
 
         <h:form id="paymentForm">
 
-            <div class="payment-header mb-3">
-                M-PESA Payment
-            </div>
+            <div class="payment-header mb-3">M-PESA Payment</div>
 
             <h:panelGrid columns="2" columnClasses="label,value" cellpadding="6">
 
@@ -157,7 +165,8 @@
                 <h:outputText value="#{customerBillingBean.selectedBill.amount}" />
 
                 <h:outputLabel for="phone" value="Phone Number:" />
-                <p:inputText id="phone" value="#{customerBillingBean.customerPhone}"
+                <p:inputText id="phone"
+                             value="#{customerBillingBean.customerPhone}"
                              required="true"
                              placeholder="2547XXXXXXXX"
                              style="width:100%;" />

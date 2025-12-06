@@ -2,7 +2,6 @@ package api.mpesa;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import okhttp3.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,14 +15,12 @@ public class MpesaService {
     private final Gson gson = new Gson();
 
     // ====================================================
-    //  GET ACCESS TOKEN
+    //  GET ACCESS TOKEN (SAFER)
     // ====================================================
     private String getAccessToken() throws Exception {
 
-        String consumerPair = MpesaConfig.CONSUMER_KEY + ":" + MpesaConfig.CONSUMER_SECRET;
-
-        String basicAuth = Base64.getEncoder()
-                .encodeToString(consumerPair.getBytes(StandardCharsets.UTF_8));
+        String auth = MpesaConfig.CONSUMER_KEY + ":" + MpesaConfig.CONSUMER_SECRET;
+        String basicAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
 
         Request request = new Request.Builder()
                 .url(MpesaConfig.TOKEN_URL)
@@ -34,98 +31,113 @@ public class MpesaService {
         Response response = client.newCall(request).execute();
 
         if (!response.isSuccessful()) {
-            throw new Exception("Unable to generate access token: " + response.code());
+            String errorBody = response.body() != null ? response.body().string() : "EMPTY";
+            throw new Exception("Token Error (" + response.code() + "): " + errorBody);
         }
 
         String raw = response.body().string();
-        System.out.println("🔑 RAW TOKEN RESPONSE: " + raw);
+        System.out.println("🔑 TOKEN RESPONSE: " + raw);
 
-        AccessTokenResponse tokenResponse = gson.fromJson(raw, AccessTokenResponse.class);
+        AccessTokenResponse token = gson.fromJson(raw, AccessTokenResponse.class);
 
-        return tokenResponse.getAccess_token();
+        if (token == null || token.getAccess_token() == null) {
+            throw new Exception("Invalid token response: " + raw);
+        }
+
+        return token.getAccess_token();
     }
 
     // ====================================================
-    //  INITIATE STK PUSH (IMPROVED)
+    //  INITIATE STK PUSH (FULLY FIXED)
     // ====================================================
     public StkPushResponse initiateStkPush(
             String phone,
             String amount,
             String description,
             String reference
-    ) throws Exception {
+    ) {
 
-        String timestamp = generateTimestamp();
+        StkPushResponse result = new StkPushResponse();
 
-        String password = Base64.getEncoder().encodeToString(
-                (MpesaConfig.SHORT_CODE + MpesaConfig.PASSKEY + timestamp)
-                        .getBytes(StandardCharsets.UTF_8)
-        );
+        try {
 
-        JsonObject payload = new JsonObject();
-        payload.addProperty("BusinessShortCode", MpesaConfig.SHORT_CODE);
-        payload.addProperty("Password", password);
-        payload.addProperty("Timestamp", timestamp);
-        payload.addProperty("TransactionType", "CustomerPayBillOnline");
-        payload.addProperty("Amount", amount);
-        payload.addProperty("PartyA", phone);
-        payload.addProperty("PartyB", MpesaConfig.SHORT_CODE);
-        payload.addProperty("PhoneNumber", phone);
-        payload.addProperty("CallBackURL", MpesaConfig.CALLBACK_URL);
-        payload.addProperty("AccountReference", reference);
-        payload.addProperty("TransactionDesc", description);
+            // --- Generate security credentials ---
+            String timestamp = generateTimestamp();
+            String password = Base64.getEncoder().encodeToString(
+                    (MpesaConfig.SHORT_CODE + MpesaConfig.PASSKEY + timestamp)
+                            .getBytes(StandardCharsets.UTF_8)
+            );
 
-        RequestBody body = RequestBody.create(
-                payload.toString(),
-                MediaType.parse("application/json")
-        );
+            // --- Build JSON payload ---
+            JsonObject payload = new JsonObject();
+            payload.addProperty("BusinessShortCode", MpesaConfig.SHORT_CODE);
+            payload.addProperty("Password", password);
+            payload.addProperty("Timestamp", timestamp);
+            payload.addProperty("TransactionType", "CustomerPayBillOnline");
+            payload.addProperty("Amount", amount);
+            payload.addProperty("PartyA", phone);
+            payload.addProperty("PartyB", MpesaConfig.SHORT_CODE);
+            payload.addProperty("PhoneNumber", phone);
+            payload.addProperty("CallBackURL", MpesaConfig.CALLBACK_URL);
+            payload.addProperty("AccountReference", reference);
+            payload.addProperty("TransactionDesc", description);
 
-        Request request = new Request.Builder()
-                .url(MpesaConfig.STK_PUSH_URL)
-                .post(body)
-                .addHeader("Authorization", "Bearer " + getAccessToken())
-                .addHeader("Content-Type", "application/json")
-                .build();
+            RequestBody body = RequestBody.create(
+                    payload.toString(),
+                    MediaType.parse("application/json")
+            );
 
-        Response response = client.newCall(request).execute();
-        String rawResponse = response.body().string();
+            Request request = new Request.Builder()
+                    .url(MpesaConfig.STK_PUSH_URL)
+                    .post(body)
+                    .addHeader("Authorization", "Bearer " + getAccessToken())
+                    .addHeader("Content-Type", "application/json")
+                    .build();
 
-        // Log FULL response for debugging
-        System.out.println("📌 RAW M-PESA RESPONSE: " + rawResponse);
+            Response response = client.newCall(request).execute();
+            String raw = response.body() != null ? response.body().string() : "{}";
 
-        // Parse to response object
-        StkPushResponse stk = gson.fromJson(rawResponse, StkPushResponse.class);
+            System.out.println("📌 RAW STK PUSH RESPONSE: " + raw);
 
-        // If ResponseCode exists → normal STK response
-        if (stk != null && stk.getResponseCode() != null) {
-            return stk;
+            // Try normal STK response
+            StkPushResponse success = gson.fromJson(raw, StkPushResponse.class);
+
+            if (success != null && success.getResponseCode() != null) {
+                return success;
+            }
+
+            // Handle error JSON
+            JsonObject json = gson.fromJson(raw, JsonObject.class);
+
+            if (json.has("errorMessage")) {
+                result.setResponseDescription(json.get("errorMessage").getAsString());
+            }
+            if (json.has("errorCode")) {
+                result.setResponseCode(json.get("errorCode").getAsString());
+            }
+
+            if (result.getResponseDescription() == null) {
+                result.setResponseDescription(raw);
+            }
+
+            return result;
+
+        } catch (Exception e) {
+
+            System.out.println("❌ STK Push Exception: " + e.getMessage());
+            e.printStackTrace();
+
+            result.setResponseCode("500");
+            result.setResponseDescription("Request failed: " + e.getMessage());
+            return result;
         }
-
-        // If M-Pesa returned an error JSON
-        JsonObject json = JsonParser.parseString(rawResponse).getAsJsonObject();
-
-        StkPushResponse error = new StkPushResponse();
-
-        if (json.has("errorMessage")) {
-            error.setResponseDescription(json.get("errorMessage").getAsString());
-        }
-        if (json.has("errorCode")) {
-            error.setResponseCode(json.get("errorCode").getAsString());
-        }
-
-        if (error.getResponseDescription() == null) {
-            error.setResponseDescription("Unknown STK Push error. RAW: " + rawResponse);
-        }
-
-        return error;
     }
 
     // ====================================================
     //  TIMESTAMP
     // ====================================================
     private String generateTimestamp() {
-        java.time.format.DateTimeFormatter dtf =
-                java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        return java.time.LocalDateTime.now().format(dtf);
+        return java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     }
 }
