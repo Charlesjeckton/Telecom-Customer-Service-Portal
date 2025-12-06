@@ -6,6 +6,7 @@ beans\admin\AdminServiceBean.class
 beans\customer\CustomerRegisterBean.class
 beans\LoginBean.class
 beans\admin\AdminReportsBean.class
+api\mpesa\StkPushResponse.class
 dao\SubscriptionDAO.class
 util\DBConnectionManager.class
 beans\admin\AdminSubscriptionBean.class
@@ -21,6 +22,7 @@ filter\RoleFilter.class
 model\Service.class
 beans\customer\AddSubscriptionBean.class
 beans\DBTestBean.class
+api\mpesa\MpesaService.class
 beans\LogoutBean.class
 dao\BillingDAO.class
 model\Subscription.class
@@ -28,3 +30,5 @@ com\telecom\telecomcustomerserviceportal\resources\JakartaEE10Resource.class
 beans\customer\CustomerReportsBean.class
 beans\customer\CustomerServiceBean.class
 dao\ServiceDAO.class
+api\mpesa\AccessTokenResponse.class
+api\mpesa\MpesaConfig.class
