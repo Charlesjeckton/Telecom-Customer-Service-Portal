@@ -79,7 +79,7 @@ public class MpesaService {
             payload.addProperty("PartyB", MpesaConfig.SHORT_CODE);
             payload.addProperty("PhoneNumber", phone);
             payload.addProperty("CallBackURL", MpesaConfig.CALLBACK_URL);
-            payload.addProperty("AccountReference", reference);
+            payload.addProperty("AccountReference", "Telecom Customer Service Portal");
             payload.addProperty("TransactionDesc", description);
 
             RequestBody body = RequestBody.create(
