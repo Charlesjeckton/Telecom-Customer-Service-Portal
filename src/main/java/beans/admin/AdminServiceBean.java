@@ -11,7 +11,6 @@ import jakarta.faces.context.FacesContext;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 @Named("adminServiceBean")
 @ViewScoped
@@ -36,20 +35,15 @@ public class AdminServiceBean implements Serializable {
     private String successMessage;
 
     // ============================
-    // Load ALL services for admin
+    // Load all services for admin
     // ============================
     @PostConstruct
     public void init() {
         services = dao.getAllServices();
 
-        // Read "success" parameter from URL and show as message
-        Map<String, String> params = FacesContext.getCurrentInstance()
-                                        .getExternalContext()
-                                        .getRequestParameterMap();
-        String success = params.get("success");
-        if (success != null && !success.isBlank()) {
-            successMessage = success;
-        }
+        // Get Flash scope success message (for redirects)
+        FacesContext fc = FacesContext.getCurrentInstance();
+        successMessage = (String) fc.getExternalContext().getFlash().get("successMessage");
     }
 
     // ============================
@@ -69,11 +63,10 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
-    // Add New Service
+    // Add new service
     // ============================
     public String addService() {
-        errorMessage = null;
-        successMessage = null;
+        clearMessages();
 
         if (!validateForm()) return null;
 
@@ -88,8 +81,9 @@ public class AdminServiceBean implements Serializable {
         boolean saved = dao.addService(service);
 
         if (saved) {
-            // Redirect to services.xhtml with success message
-            return "services.xhtml?faces-redirect=true&success=Service added successfully!";
+            // Flash scope for redirect success message
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("successMessage", "Service added successfully!");
+            return "services.xhtml?faces-redirect=true";
         } else {
             errorMessage = "Failed to add service.";
             return null;
@@ -97,10 +91,10 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
-    // Update Existing Service
+    // Update existing service
     // ============================
     public String updateService() {
-        errorMessage = null;
+        clearMessages();
 
         if (selectedService == null) {
             errorMessage = "Service not found.";
@@ -118,7 +112,9 @@ public class AdminServiceBean implements Serializable {
         boolean updated = dao.updateService(selectedService);
 
         if (updated) {
-            return "services.xhtml?faces-redirect=true&success=Service updated successfully!";
+            // Flash scope for redirect success message
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("successMessage", "Service updated successfully!");
+            return "services.xhtml?faces-redirect=true";
         } else {
             errorMessage = "Unable to update service.";
             return null;
@@ -126,9 +122,11 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
-    // Activate or Deactivate
+    // Activate / Deactivate service
     // ============================
     public void toggleStatus(Integer serviceId) {
+        clearMessages();
+
         if (serviceId == null) return;
 
         Service service = dao.getServiceById(serviceId);
@@ -143,32 +141,30 @@ public class AdminServiceBean implements Serializable {
         if (updated) {
             services = dao.getAllServices();
             successMessage = service.isActive() ? "Service activated!" : "Service deactivated!";
-            errorMessage = null;
         } else {
             errorMessage = "Unable to update service status.";
-            successMessage = null;
         }
     }
 
     // ============================
-    // Delete Service
+    // Delete service
     // ============================
     public void delete(Integer serviceId) {
+        clearMessages();
+
         if (serviceId == null) return;
 
         boolean deleted = dao.deleteService(serviceId);
         if (deleted) {
             services = dao.getAllServices();
             successMessage = "Service deleted successfully!";
-            errorMessage = null;
         } else {
             errorMessage = "Unable to delete service.";
-            successMessage = null;
         }
     }
 
     // ============================
-    // Validation
+    // Form validation
     // ============================
     private boolean validateForm() {
         if (name == null || name.isBlank()) {
@@ -195,22 +191,38 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
+    // Clear messages
+    // ============================
+    private void clearMessages() {
+        errorMessage = null;
+        successMessage = null;
+    }
+
+    // ============================
     // Getters & Setters
     // ============================
     public List<Service> getServices() { return services; }
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
+
     public Service getSelectedService() { return selectedService; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
     public Double getCharge() { return charge; }
     public void setCharge(Double charge) { this.charge = charge; }
+
     public Integer getDurationValue() { return durationValue; }
     public void setDurationValue(Integer durationValue) { this.durationValue = durationValue; }
+
     public String getDurationUnit() { return durationUnit; }
     public void setDurationUnit(String durationUnit) { this.durationUnit = durationUnit; }
+
     public String getErrorMessage() { return errorMessage; }
     public String getSuccessMessage() { return successMessage; }
 }
