@@ -118,20 +118,25 @@ public class AddSubscriptionBean implements Serializable {
     String unit = service.getDurationUnit().toUpperCase();
 
     switch (unit) {
-        case "MINUTE":
+        case "MINUTE" -> {
             return start.plus(duration, ChronoUnit.MINUTES);
-        case "HOUR":
+            }
+        case "HOUR" -> {
             return start.plus(duration, ChronoUnit.HOURS);
-        case "DAY":
+            }
+        case "DAY" -> {
             return start.plus(duration, ChronoUnit.DAYS);
-        case "WEEK":
+            }
+        case "WEEK" -> {
             return start.plus(duration * 7L, ChronoUnit.DAYS); // alternative to ChronoUnit.WEEKS
-        case "MONTH":
+            }
+        case "MONTH" -> {
             return start.plus(duration, ChronoUnit.MONTHS);
-        case "YEAR":
+            }
+        case "YEAR" -> {
             return start.plus(duration, ChronoUnit.YEARS);
-        default:
-            throw new IllegalArgumentException("Unknown duration unit: " + unit);
+            }
+        default -> throw new IllegalArgumentException("Unknown duration unit: " + unit);
     }
 }
 
