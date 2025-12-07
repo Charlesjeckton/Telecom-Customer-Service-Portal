@@ -6,13 +6,15 @@ import api.mpesa.MpesaService;
 import api.mpesa.StkPushResponse;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.faces.view.ViewScoped;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import model.Billing;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,39 +37,42 @@ public class CustomerBillingBean implements Serializable {
     private String activeTab = "unpaid";
 
     private String message;
-    private String messageType;
+    private String messageType; // "success" or "danger"
 
     private Billing selectedBill;
     private String customerPhone;
     private String checkoutRequestId;
 
-    // IMPORTANT: Used to prevent refresh-triggered STK calls
     private boolean paymentInitiated = false;
 
+    // =========================
+    // Load customer bills on bean init
+    // =========================
     @PostConstruct
     public void init() {
         loadData();
+        loadFlashMessage();
     }
 
-    // ===================================================
-    // SAFE MESSAGE CLEARING (PAGE REFRESH ONLY)
-    // ===================================================
-    public void preRender() {
-        FacesContext ctx = FacesContext.getCurrentInstance();
+    // =========================
+    // Load flash messages from previous action
+    // =========================
+    private void loadFlashMessage() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
 
-        boolean isPostback = ctx.isPostback();
-        boolean isAjax = ctx.getPartialViewContext().isAjaxRequest();
+        String flashMsg = (String) ec.getFlash().get("customerMessage");
+        String flashType = (String) ec.getFlash().get("customerMessageType");
 
-        // Clear messages ONLY on full browser refresh
-        if (!isPostback && !isAjax && !paymentInitiated) {
-            message = null;
-            messageType = null;
+        if (flashMsg != null) {
+            this.message = flashMsg;
+            this.messageType = flashType != null ? flashType : "success";
         }
     }
 
-    // ===================================================
-    // LOAD CUSTOMER BILLS
-    // ===================================================
+    // =========================
+    // Load bills for logged-in customer
+    // =========================
     public void loadData() {
         Integer customerId = getLoggedCustomerId();
 
@@ -100,29 +105,25 @@ public class CustomerBillingBean implements Serializable {
         loadData();
     }
 
-    // ===================================================
-    // INITIATE MPESA STK — SAFE VERSION
-    // ===================================================
-    public void initiateMpesaPayment() {
-
+    // =========================
+    // Initiate M-PESA STK push safely
+    // =========================
+    public String initiateMpesaPayment() {
         FacesContext ctx = FacesContext.getCurrentInstance();
 
-        // 🔥 IMPORTANT: prevent STK push during refresh
         if (!ctx.isPostback()) {
             System.out.println("DEBUG: STK PUSH BLOCKED — REFRESH DETECTED");
-            return;
+            return null;
         }
 
-        paymentInitiated = true; // only true when user clicks button
+        paymentInitiated = true;
 
         if (selectedBill == null) {
-            setErrorMessage("No bill selected for payment.");
-            return;
+            return redirectWithFlash("No bill selected for payment.", "danger");
         }
 
         if (customerPhone == null || customerPhone.trim().isEmpty()) {
-            setErrorMessage("Please enter a valid phone number.");
-            return;
+            return redirectWithFlash("Please enter a valid phone number.", "danger");
         }
 
         try {
@@ -136,74 +137,76 @@ public class CustomerBillingBean implements Serializable {
                     "BILL-" + selectedBill.getId()
             );
 
-            // Protect against HTML / plain string responses
             if (response == null) {
-                setErrorMessage("M-Pesa returned an empty or invalid response.");
-                return;
+                return redirectWithFlash("M-Pesa returned an empty or invalid response.", "danger");
             }
 
             if ("0".equals(response.getResponseCode())) {
-
                 checkoutRequestId = response.getCheckoutRequestID();
-
-                setSuccessMessage(
+                return redirectWithFlash(
                         response.getCustomerMessage() != null
                                 ? response.getCustomerMessage()
-                                : "STK Push sent successfully. Check your phone."
+                                : "STK Push sent successfully. Check your phone.",
+                        "success"
                 );
-
             } else {
-                setErrorMessage(
+                return redirectWithFlash(
                         response.getResponseDescription() != null
                                 ? response.getResponseDescription()
-                                : "Unknown M-Pesa error occurred."
+                                : "Unknown M-Pesa error occurred.",
+                        "danger"
                 );
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            setErrorMessage("M-Pesa Error: " + e.getMessage());
+            return redirectWithFlash("M-Pesa Error: " + e.getMessage(), "danger");
         }
     }
 
-    // ===================================================
-    // CALLBACK
-    // ===================================================
+    // =========================
+    // Finalize payment (callback)
+    // =========================
     public void finalizePaymentFromCallback(String mpesaCode) {
-
         if (selectedBill != null) {
             billingDAO.markBillAsPaid(selectedBill.getId());
             loadData();
         }
 
-        paymentInitiated = false; // reset
+        paymentInitiated = false;
 
-        setSuccessMessage("Payment successful! M-Pesa Code: " + mpesaCode);
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        ec.getFlash().put("customerMessage", "Payment successful! M-Pesa Code: " + mpesaCode);
+        ec.getFlash().put("customerMessageType", "success");
+
+        // Redirect to billing page with unpaid tab
+        try {
+            ec.redirect("billing.xhtml?tab=unpaid");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    // ===================================================
-    // MESSAGE HANDLING
-    // ===================================================
-    public void clearMessage() {
-        preRender(); // deprecated fallback
+    // =========================
+    // Flash message helper
+    // =========================
+    private String redirectWithFlash(String msg, String type) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        ec.getFlash().put("customerMessage", msg);
+        ec.getFlash().put("customerMessageType", type);
+
+        // Redirect to the billing page on unpaid tab
+        return "billing.xhtml?tab=unpaid&faces-redirect=true";
     }
 
-    private void setMessage(String msg, String type) {
-        this.message = msg;
-        this.messageType = type;
-    }
-
-    public void setSuccessMessage(String msg) {
-        setMessage(msg, "success");
-    }
-
-    public void setErrorMessage(String msg) {
-        setMessage(msg, "danger");
-    }
-
-    // GETTERS & SETTERS
+    // =========================
+    // Getters & Setters
+    // =========================
     public List<Billing> getPaidList() { return paidList; }
     public List<Billing> getUnpaidList() { return unpaidList; }
+
     public String getMessage() { return message; }
     public String getMessageType() { return messageType; }
     public String getActiveTab() { return activeTab; }
