@@ -46,7 +46,7 @@ CREATE TABLE services (
     description TEXT,
     charge DECIMAL(10,2) NOT NULL,
     duration_value INT NOT NULL DEFAULT 1,
-    duration_unit ENUM('HOUR', 'DAY', 'WEEK', 'MONTH') NOT NULL DEFAULT 'DAY',
+    duration_unit ENUM('MINUTE','HOUR', 'DAY', 'WEEK', 'MONTH') NOT NULL DEFAULT 'DAY',
     active TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
