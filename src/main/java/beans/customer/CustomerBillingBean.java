@@ -34,7 +34,7 @@ public class CustomerBillingBean implements Serializable {
     private List<Billing> paidList = new ArrayList<>();
     private List<Billing> unpaidList = new ArrayList<>();
 
-    private String activeTab = "unpaid";
+    private String activeTab = "unpaid"; // default tab
 
     private String message;
     private String messageType; // "success" or "danger"
@@ -46,7 +46,7 @@ public class CustomerBillingBean implements Serializable {
     private boolean paymentInitiated = false;
 
     // =========================
-    // Load customer bills on bean init
+    // Bean initialization
     // =========================
     @PostConstruct
     public void init() {
@@ -55,7 +55,7 @@ public class CustomerBillingBean implements Serializable {
     }
 
     // =========================
-    // Load flash messages from previous action
+    // Load flash messages if any
     // =========================
     private void loadFlashMessage() {
         FacesContext fc = FacesContext.getCurrentInstance();
@@ -75,7 +75,6 @@ public class CustomerBillingBean implements Serializable {
     // =========================
     public void loadData() {
         Integer customerId = getLoggedCustomerId();
-
         if (customerId == null) {
             paidList.clear();
             unpaidList.clear();
@@ -101,7 +100,7 @@ public class CustomerBillingBean implements Serializable {
     }
 
     public void switchTab(String tab) {
-        this.activeTab = tab;
+        setActiveTab(tab);
         loadData();
     }
 
@@ -180,7 +179,6 @@ public class CustomerBillingBean implements Serializable {
         ec.getFlash().put("customerMessage", "Payment successful! M-Pesa Code: " + mpesaCode);
         ec.getFlash().put("customerMessageType", "success");
 
-        // Redirect to billing page with unpaid tab
         try {
             ec.redirect("billing.xhtml?tab=unpaid");
         } catch (IOException e) {
@@ -197,7 +195,6 @@ public class CustomerBillingBean implements Serializable {
         ec.getFlash().put("customerMessage", msg);
         ec.getFlash().put("customerMessageType", type);
 
-        // Redirect to the billing page on unpaid tab
         return "billing.xhtml?tab=unpaid&faces-redirect=true";
     }
 
@@ -209,7 +206,17 @@ public class CustomerBillingBean implements Serializable {
 
     public String getMessage() { return message; }
     public String getMessageType() { return messageType; }
+
     public String getActiveTab() { return activeTab; }
+
+    // ✅ Writable property for <f:viewParam>
+    public void setActiveTab(String activeTab) {
+        if ("paid".equals(activeTab) || "unpaid".equals(activeTab)) {
+            this.activeTab = activeTab;
+        } else {
+            this.activeTab = "unpaid";
+        }
+    }
 
     public Billing getSelectedBill() { return selectedBill; }
     public void setSelectedBill(Billing selectedBill) { this.selectedBill = selectedBill; }
