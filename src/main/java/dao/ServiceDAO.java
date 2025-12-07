@@ -215,6 +215,25 @@ public class ServiceDAO {
         return false;
     }
 
+    public boolean serviceHasBillingRecords(int serviceId) {
+    String sql = "SELECT COUNT(*) FROM billing WHERE service_id = ?";
+    
+    try (Connection con = DBConnectionManager.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, serviceId);
+        ResultSet rs = ps.executeQuery();
+        
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
     // ======================================================
     // Helper: Extract service from ResultSet
     // ======================================================

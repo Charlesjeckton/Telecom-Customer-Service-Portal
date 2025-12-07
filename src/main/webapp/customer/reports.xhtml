@@ -3,189 +3,189 @@
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets">
 
-<h:head>
-    <title>Customer Reports &amp; Billing Analytics</title>
+    <h:head>
+        <title>Customer Reports &amp; Billing Analytics</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <style>
-        .content {
-            padding: 30px 40px;
-        }
-
-        @media (max-width: 768px) {
+        <style>
             .content {
-                padding: 15px;
+                padding: 30px 40px;
             }
-        }
 
-        h2.page-title {
-            font-weight: 700;
-            text-align: center;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
+            @media (max-width: 768px) {
+                .content {
+                    padding: 15px;
+                }
+            }
 
-        @media (max-width: 380px) {
             h2.page-title {
-                font-size: 20px !important;
-                margin-top: 40px !important;
+                font-weight: 700;
+                text-align: center;
+                margin-top: 10px;
+                margin-bottom: 20px;
             }
-        }
 
-        .summary-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 22px;
-            text-align: center;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-        }
+            @media (max-width: 380px) {
+                h2.page-title {
+                    font-size: 20px !important;
+                    margin-top: 40px !important;
+                }
+            }
 
-        .summary-title {
-            font-size: 16px;
-            color: #6c757d;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+            .summary-card {
+                background: #ffffff;
+                border-radius: 16px;
+                padding: 22px;
+                text-align: center;
+                box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+            }
 
-        .summary-value {
-            font-size: 32px;
-            font-weight: 700;
-        }
+            .summary-title {
+                font-size: 16px;
+                color: #6c757d;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
 
-        .chart-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 25px 22px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.10);
-            margin-bottom: 32px;
-        }
+            .summary-value {
+                font-size: 32px;
+                font-weight: 700;
+            }
 
-        .chart-title {
-            font-weight: 700;
-            margin-bottom: 18px;
-            text-align: center;
-        }
+            .chart-card {
+                background: #ffffff;
+                border-radius: 16px;
+                padding: 25px 22px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+                margin-bottom: 32px;
+            }
 
-        .chart-wrapper {
-            max-width: 850px;
-            margin: 0 auto;
-        }
+            .chart-title {
+                font-weight: 700;
+                margin-bottom: 18px;
+                text-align: center;
+            }
 
-        canvas {
-            max-height: 380px !important;
-        }
-    </style>
-</h:head>
+            .chart-wrapper {
+                max-width: 850px;
+                margin: 0 auto;
+            }
 
-<h:body>
+            canvas {
+                max-height: 380px !important;
+            }
+        </style>
+    </h:head>
 
-    <ui:include src="includes/customerTheme.xhtml"/>
-    <ui:include src="includes/customerNavbar.xhtml"/>
+    <h:body>
 
-    <h:form>
-        <div class="content">
+        <ui:include src="includes/customerTheme.xhtml"/>
+        <ui:include src="includes/customerNavbar.xhtml"/>
 
-            <h2 class="page-title">Reports &amp; Billing Analytics</h2>
+        <h:form>
+            <div class="content">
 
-            <!-- ===== SUMMARY CARDS ===== -->
-            <div class="row mb-4">
+                <h2 class="page-title">Reports &amp; Billing Analytics</h2>
 
-                <div class="col-md-4 mb-3">
-                    <div class="summary-card">
-                        <div class="summary-title">Total Bills</div>
-                        <div class="summary-value text-primary">#{customerReportsBean.totalBills}</div>
+                <!-- ===== SUMMARY CARDS ===== -->
+                <div class="row mb-4">
+
+                    <div class="col-md-4 mb-3">
+                        <div class="summary-card">
+                            <div class="summary-title">Total Bills</div>
+                            <div class="summary-value text-primary">#{customerReportsBean.totalBills}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="summary-card">
+                            <div class="summary-title">Paid Bills</div>
+                            <div class="summary-value text-success">#{customerReportsBean.paidCount}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <div class="summary-card">
+                            <div class="summary-title">Unpaid Bills</div>
+                            <div class="summary-value text-danger">#{customerReportsBean.unpaidCount}</div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- ===== PIE CHART ===== -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Paid vs Unpaid Bills</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="pieChart"></canvas>
                     </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                    <div class="summary-card">
-                        <div class="summary-title">Paid Bills</div>
-                        <div class="summary-value text-success">#{customerReportsBean.paidCount}</div>
+
+                <!-- ===== LINE CHART ===== -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Monthly Billing Trend</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="lineChart"></canvas>
                     </div>
                 </div>
 
-                <div class="col-md-4 mb-3">
-                    <div class="summary-card">
-                        <div class="summary-title">Unpaid Bills</div>
-                        <div class="summary-value text-danger">#{customerReportsBean.unpaidCount}</div>
+                <!-- ===== BAR CHART ===== -->
+                <div class="chart-card">
+                    <h3 class="chart-title">Monthly Billing Bar Graph</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="barChart"></canvas>
                     </div>
                 </div>
 
             </div>
+        </h:form>
 
 
-            <!-- ===== PIE CHART ===== -->
-            <div class="chart-card">
-                <h3 class="chart-title">Paid vs Unpaid Bills</h3>
-                <div class="chart-wrapper">
-                    <canvas id="pieChart"></canvas>
-                </div>
-            </div>
+        <!-- ===== CHART.JS SCRIPTS ===== -->
+        <script>
+            // PIE CHART
+            new Chart(document.getElementById('pieChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['Paid', 'Unpaid'],
+                    datasets: [{
+                            data: [#{customerReportsBean.paidCount}, #{customerReportsBean.unpaidCount}],
+                            backgroundColor: ['#28a745', '#dc3545']
+                        }]
+                }
+            });
 
+            // LINE CHART
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: #{customerReportsBean.monthLabels},
+                    datasets: [{
+                            label: 'Total Billing (KES)',
+                            data: #{customerReportsBean.monthValues},
+                            borderWidth: 3,
+                            borderColor: '#007bff',
+                            tension: 0.3
+                        }]
+                }
+            });
 
-            <!-- ===== LINE CHART ===== -->
-            <div class="chart-card">
-                <h3 class="chart-title">Monthly Billing Trend</h3>
-                <div class="chart-wrapper">
-                    <canvas id="lineChart"></canvas>
-                </div>
-            </div>
+            // BAR CHART
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: #{customerReportsBean.monthLabels},
+                    datasets: [{
+                            label: 'Monthly Billing (KES)',
+                            data: #{customerReportsBean.monthValues},
+                            backgroundColor: '#007bff'
+                        }]
+                }
+            });
+        </script>
 
-            <!-- ===== BAR CHART ===== -->
-            <div class="chart-card">
-                <h3 class="chart-title">Monthly Billing Bar Graph</h3>
-                <div class="chart-wrapper">
-                    <canvas id="barChart"></canvas>
-                </div>
-            </div>
-
-        </div>
-    </h:form>
-
-
-    <!-- ===== CHART.JS SCRIPTS ===== -->
-    <script>
-        // PIE CHART
-        new Chart(document.getElementById('pieChart'), {
-            type: 'pie',
-            data: {
-                labels: ['Paid', 'Unpaid'],
-                datasets: [{
-                    data: [#{customerReportsBean.paidCount}, #{customerReportsBean.unpaidCount}],
-                    backgroundColor: ['#28a745', '#dc3545']
-                }]
-            }
-        });
-
-        // LINE CHART
-        new Chart(document.getElementById('lineChart'), {
-            type: 'line',
-            data: {
-                labels: #{customerReportsBean.monthLabels},
-                datasets: [{
-                    label: 'Total Billing (KES)',
-                    data: #{customerReportsBean.monthValues},
-                    borderWidth: 3,
-                    borderColor: '#007bff',
-                    tension: 0.3
-                }]
-            }
-        });
-
-        // BAR CHART
-        new Chart(document.getElementById('barChart'), {
-            type: 'bar',
-            data: {
-                labels: #{customerReportsBean.monthLabels},
-                datasets: [{
-                    label: 'Monthly Billing (KES)',
-                    data: #{customerReportsBean.monthValues},
-                    backgroundColor: '#007bff'
-                }]
-            }
-        });
-    </script>
-
-</h:body>
+    </h:body>
 </html>

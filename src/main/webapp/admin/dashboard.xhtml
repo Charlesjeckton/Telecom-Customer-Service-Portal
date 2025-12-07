@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
       xmlns:ui="jakarta.faces.facelets">
 
     <h:head>
@@ -11,7 +10,7 @@
             /* PAGE CONTENT WRAPPER */
             .content {
                 padding: 30px;
-                margin-left: 260px; /* account for sidebar */
+                margin-left: 260px;
             }
 
             h2 {
@@ -19,7 +18,6 @@
                 margin-bottom: 30px;
             }
 
-            /* Simple separator replacement */
             .separator-gap {
                 height: 28px;
                 width: 100%;
@@ -70,18 +68,16 @@
                     padding: 20px;
                 }
             }
-            /* RESPONSIVE HEADING WITH SIDEBAR TOGGLE */
             @media (max-width: 600px) {
                 h2.text-center {
                     font-size: 22px;
-                    margin-top: 35px;   /* push down from toggle */
+                    margin-top: 35px;
                     margin-bottom: 15px;
-                    padding: 0 10px;    /* prevent text cutting */
+                    padding: 0 10px;
                     line-height: 1.3;
                 }
             }
 
-            /* Very small screens like 355px */
             @media (max-width: 380px) {
                 h2.text-center {
                     font-size: 20px;
@@ -94,7 +90,6 @@
 
     <h:body>
 
-        <!-- NO PRIMEFACES ANYMORE -->
 
         <!-- SIDEBAR AND THEME -->
         <ui:include src="/admin/includes/adminTheme.xhtml" />

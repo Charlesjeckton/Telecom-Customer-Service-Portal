@@ -22,7 +22,8 @@ public class AdminServiceBean implements Serializable {
     private ServiceDAO dao;
 
     private List<Service> services;
-    private Integer id;
+    private Integer id;                // Used when editing
+    private Integer selectedId;        // Used for delete
     private Service selectedService;
 
     private String name;
@@ -35,13 +36,12 @@ public class AdminServiceBean implements Serializable {
     private String successMessage;
 
     // ============================
-    // Load all services for admin
+    // Load all services
     // ============================
     @PostConstruct
     public void init() {
         services = dao.getAllServices();
 
-        // Get Flash scope success message (for redirects)
         FacesContext fc = FacesContext.getCurrentInstance();
         successMessage = (String) fc.getExternalContext().getFlash().get("successMessage");
     }
@@ -53,6 +53,7 @@ public class AdminServiceBean implements Serializable {
         if (id == null) return;
 
         selectedService = dao.getServiceById(id);
+
         if (selectedService != null) {
             name = selectedService.getName();
             description = selectedService.getDescription();
@@ -81,8 +82,9 @@ public class AdminServiceBean implements Serializable {
         boolean saved = dao.addService(service);
 
         if (saved) {
-            // Flash scope for redirect success message
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("successMessage", "Service added successfully!");
+            FacesContext.getCurrentInstance()
+                        .getExternalContext()
+                        .getFlash().put("successMessage", "Service added successfully!");
             return "services.xhtml?faces-redirect=true";
         } else {
             errorMessage = "Failed to add service.";
@@ -91,7 +93,7 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
-    // Update existing service
+    // Update service
     // ============================
     public String updateService() {
         clearMessages();
@@ -112,8 +114,9 @@ public class AdminServiceBean implements Serializable {
         boolean updated = dao.updateService(selectedService);
 
         if (updated) {
-            // Flash scope for redirect success message
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("successMessage", "Service updated successfully!");
+            FacesContext.getCurrentInstance()
+                        .getExternalContext()
+                        .getFlash().put("successMessage", "Service updated successfully!");
             return "services.xhtml?faces-redirect=true";
         } else {
             errorMessage = "Unable to update service.";
@@ -122,7 +125,7 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
-    // Activate / Deactivate service
+    // Toggle service status
     // ============================
     public void toggleStatus(Integer serviceId) {
         clearMessages();
@@ -147,24 +150,34 @@ public class AdminServiceBean implements Serializable {
     }
 
     // ============================
-    // Delete service
-    // ============================
-    public void delete(Integer serviceId) {
-        clearMessages();
+// Delete service with billing check
+// ============================
+public void delete(int serviceId) {
+    clearMessages();
 
-        if (serviceId == null) return;
+    // Check if service has billing records
+    boolean hasBilling = dao.serviceHasBillingRecords(serviceId);
 
-        boolean deleted = dao.deleteService(serviceId);
-        if (deleted) {
-            services = dao.getAllServices();
-            successMessage = "Service deleted successfully!";
-        } else {
-            errorMessage = "Unable to delete service.";
-        }
+    if (hasBilling) {
+        // Show friendly message if service is linked to billing
+        errorMessage = "This service cannot be deleted because it has billing records.";
+        return;
     }
 
+    // Attempt to delete service
+    boolean deleted = dao.deleteService(serviceId);
+
+    if (deleted) {
+        // Reload services list and show success
+        services = dao.getAllServices();
+        successMessage = "Service deleted successfully!";
+    } else {
+        errorMessage = "Unable to delete service.";
+    }
+}
+
     // ============================
-    // Form validation
+    // Validation
     // ============================
     private boolean validateForm() {
         if (name == null || name.isBlank()) {
@@ -187,6 +200,7 @@ public class AdminServiceBean implements Serializable {
             errorMessage = "Duration unit is required.";
             return false;
         }
+
         return true;
     }
 
@@ -205,6 +219,9 @@ public class AdminServiceBean implements Serializable {
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
+
+    public Integer getSelectedId() { return selectedId; }
+    public void setSelectedId(Integer selectedId) { this.selectedId = selectedId; }
 
     public Service getSelectedService() { return selectedService; }
 
