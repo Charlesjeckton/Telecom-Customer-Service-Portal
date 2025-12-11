@@ -25,87 +25,213 @@ public class AdminManagementBean implements Serializable {
 
     private List<Admin> adminList;
 
-    // Add fields
-    private String newAdminName;
-    private String newAdminEmail;
-    private String newAdminPhone;
-    private String newAdminUsername;
-    private String newAdminPassword;
+    // Add form
+    private String newAdminName, newAdminEmail, newAdminPhone, newAdminUsername, newAdminPassword;
 
-    // Edit fields
+    // Edit form
     private int editAdminId;
-    private String editAdminName;
-    private String editAdminEmail;
-    private String editAdminPhone;
+    private String editAdminName, editAdminEmail, editAdminPhone, editAdminUsername;
+    private String editAdminNewPassword, editAdminConfirmPassword;
+
+    // Live-validation flags (used by XHTML)
+    private boolean passwordsMatch = true;
+    private boolean editUsernameAvailable = true;
+    private boolean editEmailAvailable = true;
 
     @PostConstruct
     public void init() {
         loadAdmins();
     }
 
-    /** Load admin list from DB */
     public void loadAdmins() {
         adminList = adminDAO.getAllAdmins();
     }
 
-    /** Add a new admin with validation and redirect */
+    // ---------------- Add admin ----------------
     public void registerAdminAndRedirect() {
-        FacesContext context = FacesContext.getCurrentInstance();
+        FacesContext ctx = FacesContext.getCurrentInstance();
         boolean hasError = false;
 
-        // Validation
-        if (newAdminName == null || newAdminName.trim().isEmpty()) {
-            context.addMessage("name", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Full name is required", null));
+        if (isEmpty(newAdminName)) {
+            ctx.addMessage("name", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Full name is required", null));
             hasError = true;
         }
-
-        if (newAdminEmail == null || newAdminEmail.trim().isEmpty()) {
-            context.addMessage("email", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email is required", null));
-            hasError = true;
-        } else if (adminDAO.emailExists(newAdminEmail)) {
-            context.addMessage("email", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null));
+        if (isEmpty(newAdminEmail) || adminDAO.emailExists(newAdminEmail)) {
+            ctx.addMessage("email", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email is required or already exists", null));
             hasError = true;
         }
-
-        if (newAdminUsername == null || newAdminUsername.trim().isEmpty()) {
-            context.addMessage("username", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username is required", null));
-            hasError = true;
-        } else if (adminDAO.usernameExists(newAdminUsername)) {
-            context.addMessage("username", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username already exists", null));
+        if (isEmpty(newAdminUsername) || adminDAO.usernameExists(newAdminUsername)) {
+            ctx.addMessage("username", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username is required or already exists", null));
             hasError = true;
         }
-
-        if (newAdminPassword == null || newAdminPassword.trim().isEmpty()) {
-            context.addMessage("password", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password is required", null));
+        if (isEmpty(newAdminPassword)) {
+            ctx.addMessage("password", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Password is required", null));
             hasError = true;
         }
 
         if (hasError) {
-            return; // Stay on the page if validation fails
+            return;
         }
 
-        // Create and save admin
         Admin admin = new Admin();
         admin.setName(newAdminName);
         admin.setEmail(newAdminEmail);
         admin.setPhone(newAdminPhone);
 
         boolean success = adminDAO.createAdmin(admin, newAdminUsername, newAdminPassword);
-
         if (success) {
+            flashSuccess("Admin registered successfully!");
             resetAddFields();
-            // Add flash message
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().put("success", "Admin registered successfully!");
+            loadAdmins();
         } else {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().put("error", "Failed to register admin.");
+            flashError("Failed to register admin.");
         }
 
-        // Reload admin list so table updates immediately
-        loadAdmins();
+        redirectToManagement();
+    }
 
-        // Redirect to admin management page
+    // ---------------- Load admin into edit form ----------------
+    public void loadAdminForEdit(Admin admin) {
+        if (admin == null) {
+            return;
+        }
+        editAdminId = admin.getId();
+        // fetch fresh from DB in case other fields (username) are out of sync
+        Admin fresh = adminDAO.getAdminById(editAdminId);
+        if (fresh != null) {
+            editAdminName = fresh.getName();
+            editAdminEmail = fresh.getEmail();
+            editAdminPhone = fresh.getPhone();
+            editAdminUsername = fresh.getUsername();
+        } else {
+            // fallback
+            editAdminName = admin.getName();
+            editAdminEmail = admin.getEmail();
+            editAdminPhone = admin.getPhone();
+            editAdminUsername = admin.getUsername();
+        }
+
+        editAdminNewPassword = editAdminConfirmPassword = null;
+
+        // reset live flags
+        passwordsMatch = true;
+        editUsernameAvailable = true;
+        editEmailAvailable = true;
+    }
+
+    // ---------------- Live validators ----------------
+    // Called by f:ajax on keyup for password fields
+    public void validatePasswordLive() {
+        if (isEmpty(editAdminNewPassword) && isEmpty(editAdminConfirmPassword)) {
+            passwordsMatch = true;
+            return;
+        }
+        passwordsMatch = (editAdminNewPassword != null && editAdminNewPassword.equals(editAdminConfirmPassword));
+    }
+
+    // Called by f:ajax on username input
+    public void validateUsernameLive() {
+        if (isEmpty(editAdminUsername)) {
+            editUsernameAvailable = false;
+            return;
+        }
+        Admin current = adminDAO.getAdminById(editAdminId);
+        if (current != null && editAdminUsername.equals(current.getUsername())) {
+            editUsernameAvailable = true; // unchanged -> allowed
+            return;
+        }
+        editUsernameAvailable = !adminDAO.usernameExists(editAdminUsername);
+    }
+
+    // Called by f:ajax on email input
+    public void validateEmailLive() {
+        if (isEmpty(editAdminEmail)) {
+            editEmailAvailable = false;
+            return;
+        }
+        Admin current = adminDAO.getAdminById(editAdminId);
+        if (current != null && editAdminEmail.equals(current.getEmail())) {
+            editEmailAvailable = true;
+            return;
+        }
+        editEmailAvailable = !adminDAO.emailExists(editAdminEmail);
+    }
+
+    // ---------------- Update admin ----------------
+    public void updateAdmin() {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+
+        // server-side password match enforcement
+        if (!isEmpty(editAdminNewPassword) && !editAdminNewPassword.equals(editAdminConfirmPassword)) {
+            ctx.addMessage("editAdminConfirmPassword", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Passwords do not match", null));
+            flashError("Failed to update: passwords do not match.");
+            return;
+        }
+
+        // server-side username/email uniqueness check (again)
+        Admin current = adminDAO.getAdminById(editAdminId);
+        if (current == null) {
+            flashError("Failed to update: admin not found.");
+            return;
+        }
+
+        if (!editAdminUsername.equals(current.getUsername()) && adminDAO.usernameExists(editAdminUsername)) {
+            ctx.addMessage("editAdminUsername", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Username already exists", null));
+            flashError("Failed to update: username already exists.");
+            return;
+        }
+
+        if (!editAdminEmail.equals(current.getEmail()) && adminDAO.emailExists(editAdminEmail)) {
+            ctx.addMessage("editAdminEmail", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Email already exists", null));
+            flashError("Failed to update: email already exists.");
+            return;
+        }
+
+        // perform updates
+        Admin admin = new Admin();
+        admin.setId(editAdminId);
+        admin.setName(editAdminName);
+        admin.setEmail(editAdminEmail);
+        admin.setPhone(editAdminPhone);
+
+        boolean infoUpdated = adminDAO.updateAdmin(admin);
+        boolean credsUpdated = adminDAO.updateAdminCredentials(admin, editAdminUsername,
+                isEmpty(editAdminNewPassword) ? null : editAdminNewPassword);
+
+        if (infoUpdated && credsUpdated) {
+            flashSuccess("Admin updated successfully!");
+            resetEditFields();
+            loadAdmins();
+        } else {
+            flashError("Failed to update admin.");
+        }
+    }
+
+    // ---------------- Delete ----------------
+    public void deleteAdmin(int id) {
+        boolean success = adminDAO.deleteAdmin(id);
+        if (success) {
+            flashSuccess("Admin deleted successfully!");
+        } else {
+            flashError("Failed to delete admin.");
+        }
+        loadAdmins();
+    }
+
+    // ---------------- Helpers ----------------
+    private boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    private void flashSuccess(String text) {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("success", text);
+    }
+
+    private void flashError(String text) {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("error", text);
+    }
+
+    private void redirectToManagement() {
         try {
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             ec.redirect(ec.getRequestContextPath() + "/admin/adminManagement.xhtml?faces-redirect=true");
@@ -115,66 +241,18 @@ public class AdminManagementBean implements Serializable {
     }
 
     private void resetAddFields() {
-        newAdminName = null;
-        newAdminEmail = null;
-        newAdminPhone = null;
-        newAdminUsername = null;
-        newAdminPassword = null;
-    }
-
-    /** Load admin data into edit form */
-    public void loadAdminForEdit(Admin admin) {
-        if (admin != null) {
-            editAdminId = admin.getId();
-            editAdminName = admin.getName();
-            editAdminEmail = admin.getEmail();
-            editAdminPhone = admin.getPhone();
-        }
-    }
-
-    /** Update admin */
-    public void updateAdmin() {
-        Admin admin = new Admin();
-        admin.setId(editAdminId);
-        admin.setName(editAdminName);
-        admin.setEmail(editAdminEmail);
-        admin.setPhone(editAdminPhone);
-
-        boolean success = adminDAO.updateAdmin(admin);
-
-        if (success) {
-            loadAdmins();
-            resetEditFields();
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().put("success", "Admin updated successfully!");
-        } else {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().put("error", "Failed to update admin.");
-        }
+        newAdminName = newAdminEmail = newAdminPhone = newAdminUsername = newAdminPassword = null;
     }
 
     private void resetEditFields() {
         editAdminId = 0;
-        editAdminName = null;
-        editAdminEmail = null;
-        editAdminPhone = null;
+        editAdminName = editAdminEmail = editAdminPhone = editAdminUsername = null;
+        editAdminNewPassword = editAdminConfirmPassword = null;
+        passwordsMatch = true;
+        editUsernameAvailable = editEmailAvailable = true;
     }
 
-    /** Delete admin */
-    public void deleteAdmin(int id) {
-        boolean success = adminDAO.deleteAdmin(id);
-        loadAdmins(); // Reload table after delete
-        if (success) {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().put("success", "Admin deleted successfully!");
-        } else {
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().put("error", "Failed to delete admin.");
-        }
-    }
-
-    // ----------------- Getters & Setters -----------------
-
+    // ---------------- Getters / Setters ----------------
     public List<Admin> getAdminList() {
         return adminList;
     }
@@ -249,5 +327,41 @@ public class AdminManagementBean implements Serializable {
 
     public void setEditAdminPhone(String editAdminPhone) {
         this.editAdminPhone = editAdminPhone;
+    }
+
+    public String getEditAdminUsername() {
+        return editAdminUsername;
+    }
+
+    public void setEditAdminUsername(String editAdminUsername) {
+        this.editAdminUsername = editAdminUsername;
+    }
+
+    public String getEditAdminNewPassword() {
+        return editAdminNewPassword;
+    }
+
+    public void setEditAdminNewPassword(String editAdminNewPassword) {
+        this.editAdminNewPassword = editAdminNewPassword;
+    }
+
+    public String getEditAdminConfirmPassword() {
+        return editAdminConfirmPassword;
+    }
+
+    public void setEditAdminConfirmPassword(String editAdminConfirmPassword) {
+        this.editAdminConfirmPassword = editAdminConfirmPassword;
+    }
+
+    public boolean isPasswordsMatch() {
+        return passwordsMatch;
+    }
+
+    public boolean isEditUsernameAvailable() {
+        return editUsernameAvailable;
+    }
+
+    public boolean isEditEmailAvailable() {
+        return editEmailAvailable;
     }
 }

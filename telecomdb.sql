@@ -38,7 +38,22 @@ CREATE TABLE customers (
 
 
 -- ===========================================================
--- 3. SERVICES TABLE (With duration + charge)
+-- 3. ADMIN TABLE
+-- ===========================================================
+CREATE TABLE admins (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100) UNIQUE,
+    user_id INT UNIQUE,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ===========================================================
+-- 4. SERVICES TABLE (With duration + charge)
 -- ===========================================================
 CREATE TABLE services (
     id INT NOT NULL AUTO_INCREMENT,
@@ -46,14 +61,14 @@ CREATE TABLE services (
     description TEXT,
     charge DECIMAL(10,2) NOT NULL,
     duration_value INT NOT NULL DEFAULT 1,
-    duration_unit ENUM('MINUTE','HOUR', 'DAY', 'WEEK', 'MONTH') NOT NULL DEFAULT 'DAY',
+    duration_unit ENUM('MINUTES', 'HOUR', 'DAY', 'WEEK', 'MONTH') NOT NULL DEFAULT 'DAY',
     active TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 -- ===========================================================
--- 4. SUBSCRIPTIONS TABLE (Auto-expiry)
+-- 5. SUBSCRIPTIONS TABLE (Auto-expiry)
 -- ===========================================================
 CREATE TABLE subscriptions (
     id INT NOT NULL AUTO_INCREMENT,
@@ -69,7 +84,7 @@ CREATE TABLE subscriptions (
 
 
 -- ===========================================================
--- 5. BILLING TABLE
+-- 6. BILLING TABLE
 -- ===========================================================
 CREATE TABLE billing (
     id INT NOT NULL AUTO_INCREMENT,
@@ -98,6 +113,10 @@ INSERT INTO users (username, password, role) VALUES
 INSERT INTO customers (name, phone, email, user_id) VALUES
 ('John Doe', '0712345678', 'john@example.com', 2),
 ('Mary Kimani', '0798765432', 'mary@example.com', 3);
+
+-- Admins
+INSERT INTO admins (name, phone, email, user_id) VALUES
+('Super Admin', '0700111222', 'admin@example.com', 1);
 
 -- Services with durations
 INSERT INTO services (name, description, charge, duration_value, duration_unit, active) VALUES

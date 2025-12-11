@@ -3,62 +3,42 @@
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
       xmlns:ui="jakarta.faces.facelets">
-
-<h:head>
-    <title>Admin Management - Admin Panel</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .content {
-            padding: 20px;
-            margin-left: 260px;
-        }
-
-        @media (max-width: 992px) {
+    <h:head>
+        <title>Admin Management - Admin Panel</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
             .content {
-                margin-left: 0 !important;
-                padding: 15px;
+                padding: 20px;
+                margin-left: 260px;
             }
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap; /* wrap buttons on small screens */
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal .form-control {
-            border-radius: 8px;
-            padding: 8px 10px;
-        }
-
-        .btn-primary, .btn-secondary, .btn-danger {
-            border-radius: 8px;
-            margin-bottom: 4px;
-        }
-
-        /* Responsive table for very small screens */
-        @media (max-width: 576px) {
-            .table th, .table td {
-                font-size: 0.85rem;
-                padding: 0.3rem 0.5rem;
+            @media (max-width: 992px) {
+                .content {
+                    margin-left: 0 !important;
+                    padding: 15px;
+                }
             }
-
             .table-actions {
-                gap: 4px;
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
             }
-        }
-        
-            .add-btn {
+            .card {
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+            .modal .form-control {
+                border-radius: 8px;
+                padding: 8px 10px;
+            }
+            .btn-primary, .btn-secondary, .btn-danger {
+                border-radius: 8px;
+                margin-bottom: 4px;
+            }
+             .add-btn {
                 padding: 10px 22px;
                 font-weight: 600;
                 font-size: 8px;
@@ -77,16 +57,14 @@
                     margin-top: 50px;
                 }
             }
-    </style>
-</h:head>
+        </style>
+    </h:head>
 
-<h:body>
-    <!-- Sidebar -->
-    <ui:include src="/admin/includes/adminTheme.xhtml"/>
-    <ui:include src="/admin/includes/adminSidebar.xhtml"/>
+    <h:body>
+        <ui:include src="/admin/includes/adminTheme.xhtml"/>
+        <ui:include src="/admin/includes/adminSidebar.xhtml"/>
 
-    <div class="content">
-        <!-- Section Header -->
+        <div class="content">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold text-center text-md-start mb-3 mb-md-0">
                     Manage Admins
@@ -97,122 +75,160 @@
                 </a>
             </div>
 
-        <!-- Flash Messages -->
-        <h:panelGroup id="alertArea">
-            <h:panelGroup rendered="#{not empty flash.success}">
-                <div class="alert alert-success alert-dismissible fade show">
-                    #{flash.success}
-                    <button class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <!-- Flash Messages -->
+            <h:panelGroup id="alertArea">
+                <h:panelGroup rendered="#{not empty flash.success}">
+                    <div class="alert alert-success alert-dismissible fade show">
+                        #{flash.success}
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not empty flash.error}">
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        #{flash.error}
+                        <button class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
             </h:panelGroup>
-            <h:panelGroup rendered="#{not empty flash.error}">
-                <div class="alert alert-danger alert-dismissible fade show">
-                    #{flash.error}
-                    <button class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </h:panelGroup>
-        </h:panelGroup>
 
-        <!-- Admin Table -->
-        <h:form id="adminTableForm" prependId="false">
-            <div class="card shadow-sm">
-                <div class="card-body p-2 p-md-3">
-                    <div class="table-responsive">
-                        <h:dataTable value="#{adminManagementBean.adminList}" var="adm"
-                                     styleClass="table table-hover table-bordered align-middle mb-0"
-                                     headerClass="table-dark">
-                            <h:column>
-                                <f:facet name="header">Name</f:facet>
-                                #{adm.name}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Email</f:facet>
-                                #{adm.email}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Phone</f:facet>
-                                #{adm.phone}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Username</f:facet>
-                                #{adm.username}
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">Actions</f:facet>
-                                <div class="table-actions">
-                                    <h:commandButton value="Edit" styleClass="btn btn-secondary btn-sm"
-                                                     action="#{adminManagementBean.loadAdminForEdit(adm)}">
-                                        <f:ajax render="editAdminForm" onevent="openEditModal"/>
-                                    </h:commandButton>
-                                    <h:commandButton value="Delete" styleClass="btn btn-danger btn-sm"
-                                                     action="#{adminManagementBean.deleteAdmin(adm.id)}">
-                                        <f:ajax render="adminTableForm alertArea"/>
-                                    </h:commandButton>
+            <!-- Admin Table -->
+            <h:form id="adminTableForm" prependId="false">
+                <div class="card shadow-sm">
+                    <div class="card-body p-2 p-md-3">
+                        <div class="table-responsive">
+                            <h:dataTable value="#{adminManagementBean.adminList}" var="adm"
+                                         styleClass="table table-hover table-bordered align-middle mb-0"
+                                         headerClass="table-dark">
+                                <h:column><f:facet name="header">Name</f:facet> #{adm.name} </h:column>
+                                <h:column><f:facet name="header">Email</f:facet> #{adm.email} </h:column>
+                                <h:column><f:facet name="header">Phone</f:facet> #{adm.phone} </h:column>
+                                <h:column><f:facet name="header">Username</f:facet> #{adm.username} </h:column>
+                                <h:column>
+                                    <f:facet name="header">Actions</f:facet>
+                                    <div class="table-actions">
+                                        <h:commandButton value="Edit" styleClass="btn btn-secondary btn-sm"
+                                                         action="#{adminManagementBean.loadAdminForEdit(adm)}">
+                                            <f:ajax render="editAdminForm editAdminModal" onevent="openEditModal"/>
+                                        </h:commandButton>
+                                        <h:commandButton value="Delete" styleClass="btn btn-danger btn-sm"
+                                                         action="#{adminManagementBean.deleteAdmin(adm.id)}">
+                                            <f:ajax render="adminTableForm alertArea"/>
+                                        </h:commandButton>
+                                    </div>
+                                </h:column>
+                            </h:dataTable>
+
+                            <h:panelGroup rendered="#{empty adminManagementBean.adminList}">
+                                <p class="text-center text-muted mt-2 mb-0">No admins found.</p>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Edit Admin Modal -->
+        <div class="modal fade" id="editAdminModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary text-white justify-content-center">
+                        <h5 class="modal-title w-100 text-center">Edit Admin</h5>
+                        <button class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h:form id="editAdminForm" prependId="false">
+                            <div class="row g-3">
+                                <!-- Name -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Name</label>
+                                    <h:inputText id="editAdminName" value="#{adminManagementBean.editAdminName}" styleClass="form-control"/>
+                                    <h:message for="editAdminName" styleClass="text-danger"/>
                                 </div>
-                            </h:column>
-                        </h:dataTable>
 
-                        <h:panelGroup rendered="#{empty adminManagementBean.adminList}">
-                            <p class="text-center text-muted mt-2 mb-0">No admins found.</p>
-                        </h:panelGroup>
+                                <!-- Email -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <h:inputText id="editAdminEmail" value="#{adminManagementBean.editAdminEmail}" styleClass="form-control">
+                                        <f:ajax event="keyup" execute="@this" listener="#{adminManagementBean.validateEmailLive}" render="editAdminEmailMessage updateAdminBtn"/>
+                                    </h:inputText>
+                                    <h:panelGroup id="editAdminEmailMessage">
+                                        <h:message for="editAdminEmail" styleClass="text-danger"/>
+                                        <h:outputText value="Email already exists" styleClass="text-danger" rendered="#{not adminManagementBean.editEmailAvailable}"/>
+                                    </h:panelGroup>
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone</label>
+                                    <h:inputText id="editAdminPhone" value="#{adminManagementBean.editAdminPhone}" styleClass="form-control"/>
+                                    <h:message for="editAdminPhone" styleClass="text-danger"/>
+                                </div>
+
+                                <!-- Username -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Username</label>
+                                    <h:inputText id="editAdminUsername" value="#{adminManagementBean.editAdminUsername}" styleClass="form-control">
+                                        <f:ajax event="keyup" execute="@this" listener="#{adminManagementBean.validateUsernameLive}" render="editAdminUsernameMessage updateAdminBtn"/>
+                                    </h:inputText>
+                                    <h:panelGroup id="editAdminUsernameMessage">
+                                        <h:message for="editAdminUsername" styleClass="text-danger"/>
+                                        <h:outputText value="Username already exists" styleClass="text-danger" rendered="#{not adminManagementBean.editUsernameAvailable}"/>
+                                    </h:panelGroup>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">New Password</label>
+                                    <h:inputSecret id="editAdminNewPassword" value="#{adminManagementBean.editAdminNewPassword}" styleClass="form-control">
+                                        <f:ajax event="keyup" execute="@this editAdminConfirmPassword" listener="#{adminManagementBean.validatePasswordLive}" render="editAdminConfirmPasswordMessage updateAdminBtn"/>
+                                    </h:inputSecret>
+                                    <h:message for="editAdminNewPassword" styleClass="text-danger"/>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Confirm Password</label>
+                                    <h:inputSecret id="editAdminConfirmPassword" value="#{adminManagementBean.editAdminConfirmPassword}" styleClass="form-control">
+                                        <f:ajax event="keyup" execute="@this editAdminNewPassword" listener="#{adminManagementBean.validatePasswordLive}" render="editAdminConfirmPasswordMessage updateAdminBtn"/>
+                                    </h:inputSecret>
+                                    <h:panelGroup id="editAdminConfirmPasswordMessage">
+                                        <h:message for="editAdminConfirmPassword" styleClass="text-danger"/>
+                                        <h:outputText value="Passwords do not match" styleClass="text-danger" rendered="#{not adminManagementBean.passwordsMatch}"/>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <h:commandButton id="updateAdminBtn" value="Update Admin" styleClass="btn btn-secondary w-100"
+                                                 action="#{adminManagementBean.updateAdmin}"
+                                                 disabled="#{not adminManagementBean.passwordsMatch or not adminManagementBean.editUsernameAvailable or not adminManagementBean.editEmailAvailable}">
+                                    <f:ajax execute="@form" render="adminTableForm alertArea editAdminForm" onevent="closeEditModal"/>
+                                </h:commandButton>
+                            </div>
+                        </h:form>
                     </div>
                 </div>
             </div>
-        </h:form>
-    </div>
-
-    <!-- Edit Admin Modal -->
-    <div class="modal fade" id="editAdminModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-secondary text-white">
-                    <h5 class="modal-title">Edit Admin</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <h:form id="editAdminForm" prependId="false">
-                        <div class="mb-3">
-                            <label>Name:</label>
-                            <h:inputText value="#{adminManagementBean.editAdminName}" styleClass="form-control"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Email:</label>
-                            <h:inputText value="#{adminManagementBean.editAdminEmail}" styleClass="form-control"/>
-                        </div>
-                        <div class="mb-3">
-                            <label>Phone:</label>
-                            <h:inputText value="#{adminManagementBean.editAdminPhone}" styleClass="form-control"/>
-                        </div>
-                        <h:commandButton value="Update Admin" styleClass="btn btn-secondary w-100"
-                                         action="#{adminManagementBean.updateAdmin}">
-                            <f:ajax execute="@form"
-                                    render="adminTableForm alertArea editAdminForm"
-                                    onevent="closeEditModal"/>
-                        </h:commandButton>
-                    </h:form>
-                </div>
-            </div>
         </div>
-    </div>
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function closeEditModal(data) {
-            if (data.status === "success") {
-                const modalEl = document.getElementById("editAdminModal");
-                let modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function closeEditModal(data) {
+                if (data.status === "success") {
+                    const modalEl = document.getElementById("editAdminModal");
+                    let modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal)
+                        modal.hide();
+                }
             }
-        }
 
-        function openEditModal(data) {
-            if (data.status === "success") {
-                const modalEl = document.getElementById("editAdminModal");
-                const modal = new bootstrap.Modal(modalEl);
-                modal.show();
+            function openEditModal(data) {
+                if (data.status === "success") {
+                    const modalEl = document.getElementById("editAdminModal");
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
             }
-        }
-    </script>
-</h:body>
+        </script>
+    </h:body>
 </html>
