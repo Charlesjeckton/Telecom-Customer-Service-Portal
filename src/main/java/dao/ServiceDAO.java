@@ -16,10 +16,9 @@ public class ServiceDAO {
     // ======================================================
     public boolean addService(Service s) {
         String sql = "INSERT INTO services (name, description, charge, duration_value, duration_unit, active) "
-                   + "VALUES (?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, s.getName());
             stmt.setString(2, s.getDescription());
@@ -54,9 +53,7 @@ public class ServiceDAO {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT * FROM services WHERE active = 1 ORDER BY id DESC";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 list.add(extractService(rs));
@@ -75,9 +72,7 @@ public class ServiceDAO {
         List<Service> list = new ArrayList<>();
         String sql = "SELECT * FROM services ORDER BY id DESC";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 list.add(extractService(rs));
@@ -96,8 +91,7 @@ public class ServiceDAO {
         String sql = "SELECT * FROM services WHERE id = ?";
         Service service = null;
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -119,14 +113,13 @@ public class ServiceDAO {
     public List<Service> getServicesNotSubscribed(int customerId) {
         List<Service> list = new ArrayList<>();
 
-        String sql =
-                "SELECT * FROM services " +
-                "WHERE active = 1 AND id NOT IN (" +
-                "   SELECT service_id FROM subscriptions WHERE customer_id = ?" +
-                ") ORDER BY id";
+        String sql
+                = "SELECT * FROM services "
+                + "WHERE active = 1 AND id NOT IN ("
+                + "   SELECT service_id FROM subscriptions WHERE customer_id = ?"
+                + ") ORDER BY id";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, customerId);
             ResultSet rs = stmt.executeQuery();
@@ -146,11 +139,10 @@ public class ServiceDAO {
     // 6️⃣ AJAX — Toggle active/inactive
     // ======================================================
     public boolean toggleStatus(int id) {
-        String sql =
-                "UPDATE services SET active = CASE WHEN active = 1 THEN 0 ELSE 1 END WHERE id = ?";
+        String sql
+                = "UPDATE services SET active = CASE WHEN active = 1 THEN 0 ELSE 1 END WHERE id = ?";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
@@ -167,8 +159,7 @@ public class ServiceDAO {
     public boolean updateService(Service s) {
         String sql = "UPDATE services SET name=?, description=?, charge=?, duration_value=?, duration_unit=?, active=? WHERE id=?";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, s.getName());
             stmt.setString(2, s.getDescription());
@@ -203,8 +194,7 @@ public class ServiceDAO {
     public boolean deleteService(int id) {
         String sql = "DELETE FROM services WHERE id = ?";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
@@ -216,23 +206,22 @@ public class ServiceDAO {
     }
 
     public boolean serviceHasBillingRecords(int serviceId) {
-    String sql = "SELECT COUNT(*) FROM billing WHERE service_id = ?";
-    
-    try (Connection con = DBConnectionManager.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        
-        ps.setInt(1, serviceId);
-        ResultSet rs = ps.executeQuery();
-        
-        if (rs.next()) {
-            return rs.getInt(1) > 0;
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+        String sql = "SELECT COUNT(*) FROM billing WHERE service_id = ?";
 
-    return false;
-}
+        try (Connection con = DBConnectionManager.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
     // ======================================================
     // Helper: Extract service from ResultSet

@@ -3,12 +3,11 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-   <!-- Mobile Toggle Button -->
+    <!-- Mobile Toggle Button -->
     <button class="sidebar-toggle d-lg-none">
         <i class="bi bi-list"></i>
     </button>
 
-    <!-- SIDEBAR MARKUP -->
     <div class="sidebar">
         <h4>Admin Panel</h4>
 
@@ -25,6 +24,13 @@
                 <h:link outcome="/admin/customers.xhtml"
                         styleClass="nav-link #{sidebarBean.isActive('/admin/customers.xhtml')}">
                     <i class="bi bi-people"></i> Customers
+                </h:link>
+            </li>
+            
+            <li class="nav-item">
+                <h:link outcome="/admin/adminManagement.xhtml"
+                        styleClass="nav-link #{sidebarBean.isActive('/admin/adminManagement.xhtml')}">
+                    <i class="bi bi-shield-lock"></i> Admins
                 </h:link>
             </li>
 

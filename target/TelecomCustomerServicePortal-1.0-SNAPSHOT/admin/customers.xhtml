@@ -7,8 +7,6 @@
     <h:head>
         <title>Customer - Admin Panel</title>
 
-        <!-- Removed all PrimeFaces CSS & JS -->
-
         <style>
             .table-actions {
                 display: flex;
@@ -30,7 +28,7 @@
                     margin-top: 40px;
                     margin-bottom: 6px;
                 }
-                /* Very small phones (355px width and below) */
+
                 @media (max-width: 380px) {
                     .content .text-center h2 {
                         font-size: 20px;
@@ -46,7 +44,6 @@
             <ui:include src="/admin/includes/adminTheme.xhtml" />
             <ui:include src="/admin/includes/adminSidebar.xhtml" />
 
-            <!-- JSF form (kept for links/params) -->
             <h:form>
 
                 <!-- PAGE CONTENT -->
@@ -73,7 +70,7 @@
 
                                     <tbody>
 
-                                        <!-- Dynamic customer rows -->
+                                        <!-- Customer rows -->
                                         <ui:repeat value="#{adminCustomerBean.customers}" var="c">
                                             <tr>
                                                 <td>#{c.name}</td>

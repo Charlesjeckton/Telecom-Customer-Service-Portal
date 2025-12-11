@@ -50,7 +50,9 @@ public class AdminServiceBean implements Serializable {
     // Load service for editing
     // ============================
     public void loadServiceById() {
-        if (id == null) return;
+        if (id == null) {
+            return;
+        }
 
         selectedService = dao.getServiceById(id);
 
@@ -69,7 +71,9 @@ public class AdminServiceBean implements Serializable {
     public String addService() {
         clearMessages();
 
-        if (!validateForm()) return null;
+        if (!validateForm()) {
+            return null;
+        }
 
         Service service = new Service();
         service.setName(name);
@@ -83,8 +87,8 @@ public class AdminServiceBean implements Serializable {
 
         if (saved) {
             FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getFlash().put("successMessage", "Service added successfully!");
+                    .getExternalContext()
+                    .getFlash().put("successMessage", "Service added successfully!");
             return "services.xhtml?faces-redirect=true";
         } else {
             errorMessage = "Failed to add service.";
@@ -103,7 +107,9 @@ public class AdminServiceBean implements Serializable {
             return null;
         }
 
-        if (!validateForm()) return null;
+        if (!validateForm()) {
+            return null;
+        }
 
         selectedService.setName(name);
         selectedService.setDescription(description);
@@ -115,8 +121,8 @@ public class AdminServiceBean implements Serializable {
 
         if (updated) {
             FacesContext.getCurrentInstance()
-                        .getExternalContext()
-                        .getFlash().put("successMessage", "Service updated successfully!");
+                    .getExternalContext()
+                    .getFlash().put("successMessage", "Service updated successfully!");
             return "services.xhtml?faces-redirect=true";
         } else {
             errorMessage = "Unable to update service.";
@@ -130,7 +136,9 @@ public class AdminServiceBean implements Serializable {
     public void toggleStatus(Integer serviceId) {
         clearMessages();
 
-        if (serviceId == null) return;
+        if (serviceId == null) {
+            return;
+        }
 
         Service service = dao.getServiceById(serviceId);
         if (service == null) {
@@ -152,29 +160,29 @@ public class AdminServiceBean implements Serializable {
     // ============================
 // Delete service with billing check
 // ============================
-public void delete(int serviceId) {
-    clearMessages();
+    public void delete(int serviceId) {
+        clearMessages();
 
-    // Check if service has billing records
-    boolean hasBilling = dao.serviceHasBillingRecords(serviceId);
+        // Check if service has billing records
+        boolean hasBilling = dao.serviceHasBillingRecords(serviceId);
 
-    if (hasBilling) {
-        // Show friendly message if service is linked to billing
-        errorMessage = "This service cannot be deleted because it has billing records.";
-        return;
+        if (hasBilling) {
+            // Show friendly message if service is linked to billing
+            errorMessage = "This service cannot be deleted because it has billing records.";
+            return;
+        }
+
+        // Attempt to delete service
+        boolean deleted = dao.deleteService(serviceId);
+
+        if (deleted) {
+            // Reload services list and show success
+            services = dao.getAllServices();
+            successMessage = "Service deleted successfully!";
+        } else {
+            errorMessage = "Unable to delete service.";
+        }
     }
-
-    // Attempt to delete service
-    boolean deleted = dao.deleteService(serviceId);
-
-    if (deleted) {
-        // Reload services list and show success
-        services = dao.getAllServices();
-        successMessage = "Service deleted successfully!";
-    } else {
-        errorMessage = "Unable to delete service.";
-    }
-}
 
     // ============================
     // Validation
@@ -215,31 +223,75 @@ public void delete(int serviceId) {
     // ============================
     // Getters & Setters
     // ============================
-    public List<Service> getServices() { return services; }
+    public List<Service> getServices() {
+        return services;
+    }
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public Integer getSelectedId() { return selectedId; }
-    public void setSelectedId(Integer selectedId) { this.selectedId = selectedId; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public Service getSelectedService() { return selectedService; }
+    public Integer getSelectedId() {
+        return selectedId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setSelectedId(Integer selectedId) {
+        this.selectedId = selectedId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public Service getSelectedService() {
+        return selectedService;
+    }
 
-    public Double getCharge() { return charge; }
-    public void setCharge(Double charge) { this.charge = charge; }
+    public String getName() {
+        return name;
+    }
 
-    public Integer getDurationValue() { return durationValue; }
-    public void setDurationValue(Integer durationValue) { this.durationValue = durationValue; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getDurationUnit() { return durationUnit; }
-    public void setDurationUnit(String durationUnit) { this.durationUnit = durationUnit; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getErrorMessage() { return errorMessage; }
-    public String getSuccessMessage() { return successMessage; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getCharge() {
+        return charge;
+    }
+
+    public void setCharge(Double charge) {
+        this.charge = charge;
+    }
+
+    public Integer getDurationValue() {
+        return durationValue;
+    }
+
+    public void setDurationValue(Integer durationValue) {
+        this.durationValue = durationValue;
+    }
+
+    public String getDurationUnit() {
+        return durationUnit;
+    }
+
+    public void setDurationUnit(String durationUnit) {
+        this.durationUnit = durationUnit;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getSuccessMessage() {
+        return successMessage;
+    }
 }

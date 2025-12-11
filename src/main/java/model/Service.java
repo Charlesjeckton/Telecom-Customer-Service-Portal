@@ -20,7 +20,7 @@ public class Service {
     }
 
     public Service(int id, String name, String description, double charge,
-                   Integer durationValue, String durationUnit, boolean active) {
+            Integer durationValue, String durationUnit, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -31,7 +31,7 @@ public class Service {
     }
 
     public Service(String name, String description, double charge,
-                   Integer durationValue, String durationUnit) {
+            Integer durationValue, String durationUnit) {
         this.name = name;
         this.description = description;
         this.charge = charge;
@@ -101,14 +101,14 @@ public class Service {
 
     @Override
     public String toString() {
-        return "Service{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", charge=" + charge +
-                ", active=" + active +
-                ", durationValue=" + durationValue +
-                ", durationUnit='" + durationUnit + '\'' +
-                '}';
+        return "Service{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", description='" + description + '\''
+                + ", charge=" + charge
+                + ", active=" + active
+                + ", durationValue=" + durationValue
+                + ", durationUnit='" + durationUnit + '\''
+                + '}';
     }
 }

@@ -87,14 +87,17 @@ public class CustomerBillingBean implements Serializable {
 
     private Integer getLoggedCustomerId() {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        if (ctx == null) return null;
+        if (ctx == null) {
+            return null;
+        }
 
         LoginBean loginBean = (LoginBean) ctx.getExternalContext()
                 .getSessionMap()
                 .get("loginBean");
 
-        if (loginBean == null || loginBean.getCustomerId() == 0)
+        if (loginBean == null || loginBean.getCustomerId() == 0) {
             return null;
+        }
 
         return loginBean.getCustomerId();
     }
@@ -144,15 +147,15 @@ public class CustomerBillingBean implements Serializable {
                 checkoutRequestId = response.getCheckoutRequestID();
                 return redirectWithFlash(
                         response.getCustomerMessage() != null
-                                ? response.getCustomerMessage()
-                                : "STK Push sent successfully. Check your phone.",
+                        ? response.getCustomerMessage()
+                        : "STK Push sent successfully. Check your phone.",
                         "success"
                 );
             } else {
                 return redirectWithFlash(
                         response.getResponseDescription() != null
-                                ? response.getResponseDescription()
-                                : "Unknown M-Pesa error occurred.",
+                        ? response.getResponseDescription()
+                        : "Unknown M-Pesa error occurred.",
                         "danger"
                 );
             }
@@ -201,13 +204,25 @@ public class CustomerBillingBean implements Serializable {
     // =========================
     // Getters & Setters
     // =========================
-    public List<Billing> getPaidList() { return paidList; }
-    public List<Billing> getUnpaidList() { return unpaidList; }
+    public List<Billing> getPaidList() {
+        return paidList;
+    }
 
-    public String getMessage() { return message; }
-    public String getMessageType() { return messageType; }
+    public List<Billing> getUnpaidList() {
+        return unpaidList;
+    }
 
-    public String getActiveTab() { return activeTab; }
+    public String getMessage() {
+        return message;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public String getActiveTab() {
+        return activeTab;
+    }
 
     // ✅ Writable property for <f:viewParam>
     public void setActiveTab(String activeTab) {
@@ -218,11 +233,23 @@ public class CustomerBillingBean implements Serializable {
         }
     }
 
-    public Billing getSelectedBill() { return selectedBill; }
-    public void setSelectedBill(Billing selectedBill) { this.selectedBill = selectedBill; }
+    public Billing getSelectedBill() {
+        return selectedBill;
+    }
 
-    public String getCustomerPhone() { return customerPhone; }
-    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
+    public void setSelectedBill(Billing selectedBill) {
+        this.selectedBill = selectedBill;
+    }
 
-    public String getCheckoutRequestId() { return checkoutRequestId; }
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public String getCheckoutRequestId() {
+        return checkoutRequestId;
+    }
 }

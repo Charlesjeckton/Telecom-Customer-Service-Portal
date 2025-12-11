@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <title>Add Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .content {
+            margin-left: 260px;
+            padding: 15px 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0 !important;
+                padding: 10px 15px;
+            }
+        }
+
+        .card {
+            max-width: 500px;
+            margin: 10px auto 20px;
+            padding: 20px 25px;     /* smaller padding */
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h3 {
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #ced4da;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+            opacity: 1;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .btn-primary {
+            border-radius: 10px;
+            padding: 10px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-1px);
+        }
+
+        .alert {
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.9rem; /* tighter spacing */
+        }
+
+        .d-grid {
+            margin-top: 15px; /* less spacing above button */
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <ui:include src="/admin/includes/adminTheme.xhtml"/>
+    <ui:include src="/admin/includes/adminSidebar.xhtml"/>
+
+    <div class="content">
+        <div class="card">
+            <h3 class="text-center">Add New Admin</h3>
+
+            <!-- Flash Alerts -->
+            <h:panelGroup id="alertArea">
+                <h:panelGroup rendered="#{not empty flash.success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        #{flash.success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not empty flash.error}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        #{flash.error}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
+
+            <h:form prependId="false">
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label class="form-label" for="name">Full Name</label>
+                    <h:inputText id="name" value="#{adminManagementBean.newAdminName}" styleClass="form-control">
+                        <f:passThroughAttribute name="placeholder" value="Enter full name" />
+                    </h:inputText>
+                    <h:message for="name" styleClass="text-danger small"/>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <h:inputText id="email" value="#{adminManagementBean.newAdminEmail}" styleClass="form-control">
+                        <f:passThroughAttribute name="placeholder" value="Enter email address" />
+                    </h:inputText>
+                    <h:message for="email" styleClass="text-danger small"/>
+                </div>
+
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label class="form-label" for="phone">Phone</label>
+                    <h:inputText id="phone" value="#{adminManagementBean.newAdminPhone}" styleClass="form-control">
+                        <f:passThroughAttribute name="placeholder" value="Enter phone number" />
+                    </h:inputText>
+                    <h:message for="phone" styleClass="text-danger small"/>
+                </div>
+
+                <!-- Username -->
+                <div class="mb-3">
+                    <label class="form-label" for="username">Username</label>
+                    <h:inputText id="username" value="#{adminManagementBean.newAdminUsername}" styleClass="form-control">
+                        <f:passThroughAttribute name="placeholder" value="Choose a username" />
+                    </h:inputText>
+                    <h:message for="username" styleClass="text-danger small"/>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label" for="password">Password</label>
+                    <h:inputSecret id="password" value="#{adminManagementBean.newAdminPassword}" styleClass="form-control">
+                        <f:passThroughAttribute name="placeholder" value="Enter password" />
+                    </h:inputSecret>
+                    <h:message for="password" styleClass="text-danger small"/>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <h:commandButton value="Register Admin" styleClass="btn btn-primary" 
+                                     action="#{adminManagementBean.registerAdminAndRedirect}"/>
+                </div>
+            </h:form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</h:body>
+</html>

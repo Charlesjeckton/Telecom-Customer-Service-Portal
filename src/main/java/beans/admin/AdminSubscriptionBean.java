@@ -5,7 +5,7 @@ import model.Subscription;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.enterprise.context.RequestScoped; // <-- use RequestScoped
+import jakarta.enterprise.context.RequestScoped;
 import java.io.Serializable;
 import java.util.List;
 

@@ -4,87 +4,85 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-<h:body>
+    <h:body>
 
-    <style>
-        /* PAGE LAYOUT — SAME STYLE AS SUBSCRIPTIONS PAGE */
-        .main-content {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 576px) {
+        <style>
             .main-content {
-                padding: 15px 10px;
+                max-width: 1100px;
+                margin: 0 auto;
             }
-        }
 
-        /* RESPONSIVE TABLE */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+            @media (max-width: 576px) {
+                .main-content {
+                    padding: 15px 10px;
+                }
+            }
 
-        th, td {
-            white-space: nowrap;
-            vertical-align: middle !important;
-        }
-    </style>
+            .table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
 
-    <!-- Main Responsive Container -->
-    <div class="main-content">
+            th, td {
+                white-space: nowrap;
+                vertical-align: middle !important;
+            }
+        </style>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+        <!-- Main Responsive Container -->
+        <div class="main-content">
 
-                <!-- Responsive Wrapper -->
-                <div class="table-responsive">
+            <div class="card shadow-sm">
+                <div class="card-body">
 
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Service Name</th>
-                                <th>Amount (KES)</th>
-                                <th>Billing Date</th>
-                            </tr>
-                        </thead>
+                    <!-- Responsive Wrapper -->
+                    <div class="table-responsive">
 
-                        <tbody>
-
-                            <!-- When list is NOT empty -->
-                            <ui:repeat value="#{customerBillingBean.paidList}"
-                                       var="bill"
-                                       rendered="#{not empty customerBillingBean.paidList}">
+                        <table class="table table-hover table-bordered align-middle">
+                            <thead class="table-dark">
                                 <tr>
-                                    <td>#{bill.serviceName}</td>
-                                    <td>#{bill.amount}</td>
-                                    <td>
-                                        <h:outputText value="#{bill.billingDate}">
-                                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
-                                        </h:outputText>
-                                    </td>
+                                    <th>Service Name</th>
+                                    <th>Amount (KES)</th>
+                                    <th>Billing Date</th>
                                 </tr>
-                            </ui:repeat>
+                            </thead>
 
-                            <!-- When list IS empty -->
-                            <h:panelGroup rendered="#{empty customerBillingBean.paidList}">
-                                <tr>
-                                    <td colspan="3" class="text-center text-muted py-3">
-                                        No paid bills found.
-                                    </td>
-                                </tr>
-                            </h:panelGroup>
+                            <tbody>
 
-                        </tbody>
-                    </table>
+                                <!-- When list is NOT empty -->
+                                <ui:repeat value="#{customerBillingBean.paidList}"
+                                           var="bill"
+                                           rendered="#{not empty customerBillingBean.paidList}">
+                                    <tr>
+                                        <td>#{bill.serviceName}</td>
+                                        <td>#{bill.amount}</td>
+                                        <td>
+                                            <h:outputText value="#{bill.billingDate}">
+                                                <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                                            </h:outputText>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+
+                                <!-- When list IS empty -->
+                                <h:panelGroup rendered="#{empty customerBillingBean.paidList}">
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-3">
+                                            No paid bills found.
+                                        </td>
+                                    </tr>
+                                </h:panelGroup>
+
+                            </tbody>
+                        </table>
+
+                    </div>
 
                 </div>
-
             </div>
+
         </div>
 
-    </div>
-
-</h:body>
+    </h:body>
 </html>

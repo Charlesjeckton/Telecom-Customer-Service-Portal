@@ -53,7 +53,15 @@ public class AdminCustomerDetailsBean implements Serializable {
     }
 
     // ---------------- Getters ----------------
-    public Customer getCustomer() { return customer; }
-    public boolean isInvalid() { return invalid; }
-    public boolean isNotFound() { return notFound; }
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public boolean isInvalid() {
+        return invalid;
+    }
+
+    public boolean isNotFound() {
+        return notFound;
+    }
 }

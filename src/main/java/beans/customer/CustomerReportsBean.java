@@ -64,7 +64,9 @@ public class CustomerReportsBean implements Serializable {
 
     private Integer getLoggedCustomerId() {
         FacesContext ctx = FacesContext.getCurrentInstance();
-        if (ctx == null) return null;
+        if (ctx == null) {
+            return null;
+        }
 
         LoginBean loginBean = (LoginBean) ctx.getExternalContext()
                 .getSessionMap()
@@ -78,9 +80,23 @@ public class CustomerReportsBean implements Serializable {
     }
 
     // Getters
-    public int getPaidCount() { return paidCount; }
-    public int getUnpaidCount() { return unpaidCount; }
-    public int getTotalBills() { return totalBills; }
-    public String getMonthLabels() { return monthLabels; }
-    public String getMonthValues() { return monthValues; }
+    public int getPaidCount() {
+        return paidCount;
+    }
+
+    public int getUnpaidCount() {
+        return unpaidCount;
+    }
+
+    public int getTotalBills() {
+        return totalBills;
+    }
+
+    public String getMonthLabels() {
+        return monthLabels;
+    }
+
+    public String getMonthValues() {
+        return monthValues;
+    }
 }

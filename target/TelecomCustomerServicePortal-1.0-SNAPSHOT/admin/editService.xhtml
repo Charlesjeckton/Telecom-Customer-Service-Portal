@@ -5,111 +5,146 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
 
-<h:head>
-    <title>Edit Service - Admin Panel</title>
+    <h:head>
+        <title>Edit Service - Admin Panel</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@5.0.0/primeicons.css"/>
 
-    <style>
-        body { background: #f2f4f7; }
-        .center-wrapper { display: flex; justify-content: center; padding: 40px 15px; margin-left: 260px; }
-        .service-card { width: 100%; max-width: 480px; padding: 25px 22px; background: #fff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.10); }
-        h2 { font-weight: 700; margin-bottom: 20px; text-align: center; color: #343a40; }
-        .input-group-text { background: #f1f1f1; border-right: none; }
-        .form-control, .form-select { background: #f1f1f1; border-left: none; }
-        .form-control:focus, .form-select:focus { background: #fff; border-color: #0d6efd; box-shadow: 0 0 4px rgba(13,110,253,0.4); }
-        .alert { border-radius: 8px; }
-        @media (max-width: 768px) { .center-wrapper { margin-left: 0 !important; } }
-    </style>
-</h:head>
+        <style>
+            body {
+                background: #f2f4f7;
+            }
+            .center-wrapper {
+                display: flex;
+                justify-content: center;
+                padding: 40px 15px;
+                margin-left: 260px;
+            }
+            .service-card {
+                width: 100%;
+                max-width: 480px;
+                padding: 25px 22px;
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+            }
+            h2 {
+                font-weight: 700;
+                margin-bottom: 20px;
+                text-align: center;
+                color: #343a40;
+            }
+            .input-group-text {
+                background: #f1f1f1;
+                border-right: none;
+            }
+            .form-control, .form-select {
+                background: #f1f1f1;
+                border-left: none;
+            }
+            .form-control:focus, .form-select:focus {
+                background: #fff;
+                border-color: #0d6efd;
+                box-shadow: 0 0 4px rgba(13,110,253,0.4);
+            }
+            .alert {
+                border-radius: 8px;
+            }
+            @media (max-width: 768px) {
+                .center-wrapper {
+                    margin-left: 0 !important;
+                }
+            }
+        </style>
+    </h:head>
 
-<h:body>
+    <h:body>
 
-    <ui:include src="/admin/includes/adminTheme.xhtml"/>
-    <ui:include src="/admin/includes/adminSidebar.xhtml"/>
+        <ui:include src="/admin/includes/adminTheme.xhtml"/>
+        <ui:include src="/admin/includes/adminSidebar.xhtml"/>
 
-    <f:metadata>
-        <f:viewParam name="id" value="#{adminServiceBean.id}"/>
-        <f:event type="preRenderView" listener="#{adminServiceBean.loadServiceById}"/>
-    </f:metadata>
+        <f:metadata>
+            <f:viewParam name="id" value="#{adminServiceBean.id}"/>
+            <f:event type="preRenderView" listener="#{adminServiceBean.loadServiceById}"/>
+        </f:metadata>
 
-    <div class="center-wrapper">
-        <div class="service-card">
+        <div class="center-wrapper">
+            <div class="service-card">
 
-            <h2>Edit Service</h2>
+                <h2>Edit Service</h2>
 
-            <!-- ERROR MESSAGE ONLY -->
-            <h:panelGroup rendered="#{not empty adminServiceBean.errorMessage}">
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h:outputText value="#{adminServiceBean.errorMessage}" />
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            </h:panelGroup>
-
-            <!-- Service not found -->
-            <h:panelGroup rendered="#{adminServiceBean.selectedService == null}">
-                <div class="alert alert-danger mt-3">Service not found.</div>
-                <h:link outcome="services.xhtml" styleClass="btn btn-secondary mt-3">Back</h:link>
-            </h:panelGroup>
-
-            <!-- Edit form -->
-            <h:panelGroup rendered="#{adminServiceBean.selectedService != null}">
-                <h:form>
-
-                    <h:inputHidden value="#{adminServiceBean.id}" />
-
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="pi pi-file"></i></span>
-                        <h:inputText value="#{adminServiceBean.name}" required="true"
-                                     styleClass="form-control" p:placeholder="Service Name"/>
+                <!-- ERROR MESSAGE ONLY -->
+                <h:panelGroup rendered="#{not empty adminServiceBean.errorMessage}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <h:outputText value="#{adminServiceBean.errorMessage}" />
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
+                </h:panelGroup>
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="pi pi-align-left"></i></span>
-                        <h:inputTextarea value="#{adminServiceBean.description}" rows="3"
-                                         required="true" styleClass="form-control"
-                                         p:placeholder="Description"/>
-                    </div>
+                <!-- Service not found -->
+                <h:panelGroup rendered="#{adminServiceBean.selectedService == null}">
+                    <div class="alert alert-danger mt-3">Service not found.</div>
+                    <h:link outcome="services.xhtml" styleClass="btn btn-secondary mt-3">Back</h:link>
+                </h:panelGroup>
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="pi pi-money-bill"></i></span>
-                        <h:inputText value="#{adminServiceBean.charge}" required="true"
-                                     styleClass="form-control" p:type="number"
-                                     p:step="0.01" p:placeholder="Charges (KES)"/>
-                    </div>
+                <!-- Edit form -->
+                <h:panelGroup rendered="#{adminServiceBean.selectedService != null}">
+                    <h:form>
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="pi pi-clock"></i></span>
-                        <h:inputText value="#{adminServiceBean.durationValue}" required="true"
-                                     styleClass="form-control" p:type="number"
-                                     p:placeholder="Duration Value"/>
-                    </div>
+                        <h:inputHidden value="#{adminServiceBean.id}" />
 
-                    <div class="input-group mb-3">
-                        <span class="input-group-text"><i class="pi pi-calendar"></i></span>
-                        <h:selectOneMenu value="#{adminServiceBean.durationUnit}" required="true"
-                                         styleClass="form-select form-control">
-                            <f:selectItem itemLabel="-- Select Duration Unit --" itemValue=""/>
-                            <f:selectItem itemLabel="Minutes" itemValue="MINUTE"/>
-                            <f:selectItem itemLabel="Hours" itemValue="HOUR"/>
-                            <f:selectItem itemLabel="Days" itemValue="DAY"/>
-                            <f:selectItem itemLabel="Weeks" itemValue="WEEK"/>
-                            <f:selectItem itemLabel="Months" itemValue="MONTH"/>
-                            <f:selectItem itemLabel="Years" itemValue="YEAR"/>
-                        </h:selectOneMenu>
-                    </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="pi pi-file"></i></span>
+                            <h:inputText value="#{adminServiceBean.name}" required="true"
+                                         styleClass="form-control" p:placeholder="Service Name"/>
+                        </div>
 
-                    <div class="d-grid gap-2 mt-3">
-                        <h:commandButton value="Update Service" action="#{adminServiceBean.updateService}" styleClass="btn btn-primary"/>
-                        <h:link outcome="services.xhtml" styleClass="btn btn-secondary">Cancel</h:link>
-                    </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="pi pi-align-left"></i></span>
+                            <h:inputTextarea value="#{adminServiceBean.description}" rows="3"
+                                             required="true" styleClass="form-control"
+                                             p:placeholder="Description"/>
+                        </div>
 
-                </h:form>
-            </h:panelGroup>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="pi pi-money-bill"></i></span>
+                            <h:inputText value="#{adminServiceBean.charge}" required="true"
+                                         styleClass="form-control" p:type="number"
+                                         p:step="0.01" p:placeholder="Charges (KES)"/>
+                        </div>
 
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="pi pi-clock"></i></span>
+                            <h:inputText value="#{adminServiceBean.durationValue}" required="true"
+                                         styleClass="form-control" p:type="number"
+                                         p:placeholder="Duration Value"/>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="pi pi-calendar"></i></span>
+                            <h:selectOneMenu value="#{adminServiceBean.durationUnit}" required="true"
+                                             styleClass="form-select form-control">
+                                <f:selectItem itemLabel="-- Select Duration Unit --" itemValue=""/>
+                                <f:selectItem itemLabel="Minutes" itemValue="MINUTE"/>
+                                <f:selectItem itemLabel="Hours" itemValue="HOUR"/>
+                                <f:selectItem itemLabel="Days" itemValue="DAY"/>
+                                <f:selectItem itemLabel="Weeks" itemValue="WEEK"/>
+                                <f:selectItem itemLabel="Months" itemValue="MONTH"/>
+                                <f:selectItem itemLabel="Years" itemValue="YEAR"/>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <h:commandButton value="Update Service" action="#{adminServiceBean.updateService}" styleClass="btn btn-primary"/>
+                            <h:link outcome="services.xhtml" styleClass="btn btn-secondary">Cancel</h:link>
+                        </div>
+
+                    </h:form>
+                </h:panelGroup>
+
+            </div>
         </div>
-    </div>
 
-</h:body>
+    </h:body>
 </html>

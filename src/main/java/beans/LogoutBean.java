@@ -16,9 +16,9 @@ public class LogoutBean implements Serializable {
         try {
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
             FacesContext.getCurrentInstance().getExternalContext()
-                        .redirect(FacesContext.getCurrentInstance()
-                                              .getExternalContext()
-                                              .getRequestContextPath() + "/login.xhtml");
+                    .redirect(FacesContext.getCurrentInstance()
+                            .getExternalContext()
+                            .getRequestContextPath() + "/login.xhtml");
         } catch (IOException e) {
             e.printStackTrace();
         }

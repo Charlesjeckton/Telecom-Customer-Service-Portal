@@ -50,8 +50,12 @@ public class LoginBean implements Serializable {
     // Login with role-based redirect
     // ---------------------------
     public String login() {
-        if (username != null) username = username.trim();
-        if (password != null) password = password.trim();
+        if (username != null) {
+            username = username.trim();
+        }
+        if (password != null) {
+            password = password.trim();
+        }
 
         loggedInUser = userDAO.login(username, password);
 
@@ -111,16 +115,35 @@ public class LoginBean implements Serializable {
     // ---------------------------
     // Getters & Setters
     // ---------------------------
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public User getLoggedInUser() { return loggedInUser; }
+    public String getPassword() {
+        return password;
+    }
 
-    public int getCustomerId() { return customerId; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public boolean isDebug() { return debug; }
-    public boolean isDbConnected() { return dbConnected; }
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public boolean isDbConnected() {
+        return dbConnected;
+    }
 }

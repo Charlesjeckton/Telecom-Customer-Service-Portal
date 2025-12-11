@@ -14,11 +14,8 @@ import java.util.List;
 public class CustomerDAO {
 
     /**
-     * Register a new customer with a linked user account.
-     * Handles:
-     *  - duplicate username
-     *  - duplicate email
-     *  - full transaction (rollback on failure)
+     * Register a new customer with a linked user account. Handles: - duplicate
+     * username - duplicate email - full transaction (rollback on failure)
      */
     public String registerCustomer(Customer c, User u) {
 
@@ -96,13 +93,11 @@ public class CustomerDAO {
         }
     }
 
-
     // 🔎 Get customer by ID
     public Customer getCustomerById(int id) {
         String sql = "SELECT * FROM customers WHERE id = ?";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -115,8 +110,9 @@ public class CustomerDAO {
                 c.setEmail(rs.getString("email"));
 
                 Date regDate = rs.getDate("registration_date");
-                if (regDate != null)
+                if (regDate != null) {
                     c.setRegistrationDate(new java.util.Date(regDate.getTime()));
+                }
 
                 return c;
             }
@@ -127,14 +123,12 @@ public class CustomerDAO {
         return null;
     }
 
-
     // Legacy insert method (kept for compatibility)
     public boolean insertCustomer(Customer c) {
 
         String sql = "INSERT INTO customers (name, phone, email, registration_date, user_id) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, c.getName());
             stmt.setString(2, c.getPhoneNumber()); // FIXED
@@ -150,15 +144,12 @@ public class CustomerDAO {
         }
     }
 
-
     // 🧾 Get all customers
     public List<Customer> getAllCustomers() {
         List<Customer> list = new ArrayList<>();
         String sql = "SELECT * FROM customers";
 
-        try (Connection conn = DBConnectionManager.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBConnectionManager.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
 
@@ -169,8 +160,9 @@ public class CustomerDAO {
                 c.setEmail(rs.getString("email"));
 
                 Date regDate = rs.getDate("registration_date");
-                if (regDate != null)
+                if (regDate != null) {
                     c.setRegistrationDate(new java.util.Date(regDate.getTime()));
+                }
 
                 list.add(c);
             }

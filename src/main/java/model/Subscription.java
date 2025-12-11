@@ -22,7 +22,8 @@ public class Subscription {
     private double monthlyPrice;
 
     // ===== Constructors =====
-    public Subscription() {}
+    public Subscription() {
+    }
 
     public Subscription(int customerId, int serviceId, Date purchaseDate, Date expiryDate, String status) {
         this.customerId = customerId;
@@ -37,29 +38,69 @@ public class Subscription {
     }
 
     // ===== Getters & Setters =====
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public int getCustomerId() { return customerId; }
-    public void setCustomerId(int customerId) { this.customerId = customerId; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public int getServiceId() { return serviceId; }
-    public void setServiceId(int serviceId) { this.serviceId = serviceId; }
+    public int getCustomerId() {
+        return customerId;
+    }
 
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
 
-    public String getServiceName() { return serviceName; }
-    public void setServiceName(String serviceName) { this.serviceName = serviceName; }
+    public int getServiceId() {
+        return serviceId;
+    }
 
-    public Date getPurchaseDate() { return purchaseDate; }
-    public void setPurchaseDate(Date purchaseDate) { this.purchaseDate = purchaseDate; }
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
+    }
 
-    public Date getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(Date expiryDate) { this.expiryDate = expiryDate; }
+    public String getCustomerName() {
+        return customerName;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public Date getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(Date purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     // ===== NEW GETTER & SETTER FOR monthlyPrice =====
     public double getMonthlyPrice() {
@@ -72,16 +113,16 @@ public class Subscription {
 
     @Override
     public String toString() {
-        return "Subscription{" +
-                "id=" + id +
-                ", customerId=" + customerId +
-                ", serviceId=" + serviceId +
-                ", customerName='" + customerName + '\'' +
-                ", serviceName='" + serviceName + '\'' +
-                ", purchaseDate=" + purchaseDate +
-                ", expiryDate=" + expiryDate +
-                ", status='" + status + '\'' +
-                ", monthlyPrice=" + monthlyPrice +
-                '}';
+        return "Subscription{"
+                + "id=" + id
+                + ", customerId=" + customerId
+                + ", serviceId=" + serviceId
+                + ", customerName='" + customerName + '\''
+                + ", serviceName='" + serviceName + '\''
+                + ", purchaseDate=" + purchaseDate
+                + ", expiryDate=" + expiryDate
+                + ", status='" + status + '\''
+                + ", monthlyPrice=" + monthlyPrice
+                + '}';
     }
 }

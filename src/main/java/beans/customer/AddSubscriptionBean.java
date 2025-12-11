@@ -113,32 +113,33 @@ public class AddSubscriptionBean implements Serializable {
     // ------------------------------------
     // Expiry Calculator
     // ------------------------------------
-  private LocalDateTime calculateExpiry(LocalDateTime start, Service service) {
-    int duration = service.getDurationValue();
-    String unit = service.getDurationUnit().toUpperCase();
+    private LocalDateTime calculateExpiry(LocalDateTime start, Service service) {
+        int duration = service.getDurationValue();
+        String unit = service.getDurationUnit().toUpperCase();
 
-    switch (unit) {
-        case "MINUTE" -> {
-            return start.plus(duration, ChronoUnit.MINUTES);
+        switch (unit) {
+            case "MINUTE" -> {
+                return start.plus(duration, ChronoUnit.MINUTES);
             }
-        case "HOUR" -> {
-            return start.plus(duration, ChronoUnit.HOURS);
+            case "HOUR" -> {
+                return start.plus(duration, ChronoUnit.HOURS);
             }
-        case "DAY" -> {
-            return start.plus(duration, ChronoUnit.DAYS);
+            case "DAY" -> {
+                return start.plus(duration, ChronoUnit.DAYS);
             }
-        case "WEEK" -> {
-            return start.plus(duration * 7L, ChronoUnit.DAYS); // alternative to ChronoUnit.WEEKS
+            case "WEEK" -> {
+                return start.plus(duration * 7L, ChronoUnit.DAYS); // alternative to ChronoUnit.WEEKS
             }
-        case "MONTH" -> {
-            return start.plus(duration, ChronoUnit.MONTHS);
+            case "MONTH" -> {
+                return start.plus(duration, ChronoUnit.MONTHS);
             }
-        case "YEAR" -> {
-            return start.plus(duration, ChronoUnit.YEARS);
+            case "YEAR" -> {
+                return start.plus(duration, ChronoUnit.YEARS);
             }
-        default -> throw new IllegalArgumentException("Unknown duration unit: " + unit);
+            default ->
+                throw new IllegalArgumentException("Unknown duration unit: " + unit);
+        }
     }
-}
 
     // ------------------------------------
     // Flash Message (success / error)
